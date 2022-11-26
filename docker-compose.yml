@@ -1,0 +1,9 @@
+version: "3.0"
+
+services:
+  android_app:
+    image: kivy/buildozer
+    volumes:
+      - /home/iramluism/.buildozer:/home/user/.buildozer
+      - .:/home/user/hostcwd
+    command: android debug deploy run
