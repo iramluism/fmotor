@@ -1,0 +1,22 @@
+
+
+MDBoxLayout:
+    id: motor_comp
+    orientation: "vertical"
+    height: "300dp"
+    spacing: "12dp"
+    size_hint_y: None
+
+    MDGridLayout:
+        cols: 3
+        size_hint_y: 0.3
+
+        MDLabel:
+            id: voltage
+            markup:True
+        MDLabel:
+            id: kw
+            markup:True
+        MDLabel:
+            id: rpm
+            markup:True

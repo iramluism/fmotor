@@ -1,0 +1,40 @@
+
+
+MDBoxLayout:
+    id: motor_comp
+    orientation: "vertical"
+    height: "300dp"
+    spacing: "12dp"
+    size_hint_y: None
+
+    MDLabel:
+        id: model
+        markup: True
+        size_hint_y: 0.05
+
+    MDLabel:
+        id: manufacturer
+        markup:True
+        size_hint_y: 0.05
+
+    MDGridLayout:
+        cols: 2
+        size_hint_y: 0.4
+        MDLabel:
+            id: design
+            markup:True
+        MDLabel:
+            id: catalog
+            markup:True
+        MDLabel:
+            id: frame
+            markup:True
+        MDLabel:
+            id: voltage
+            markup:True
+        MDLabel:
+            id: kw
+            markup:True
+        MDLabel:
+            id: rpm
+            markup:True
