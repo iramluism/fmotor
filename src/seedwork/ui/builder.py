@@ -1,32 +1,36 @@
+""" Builder Interfaces Module """
 
 import abc
 import inspect
+from dependency_injector.wiring import Provide
 
-from src.seedwork.ui.components import IComponent
 from kivy.lang.builder import Builder
 from kivy.factory import Factory
-from src.seedwork.ui.utils import get_state, get_running_app
-
-
 from kivy.uix.widget import Widget
+
+from src.seedwork.ui.components import IComponent
 
 
 class IBuilder(metaclass=abc.ABCMeta):
+	""" IBuilder class """
 
-	@property
-	def app(self):
-		return get_running_app()
+	_component_cache = Provide["component_cache"]
+	_builder = Builder
 
-	def __init__(self):
-		self._builder = Builder
+	def load_file(self, *args, **kwargs):
+		""" Load widget from kv file """
+		return self._builder.load_file(*args, **kwargs)
 
-	def parse_state_name(self, event_name):
-		return event_name[3:]
+	def get_component(self, comp_id):
+		""" Get Component from cache """
+		return self._component_cache.get(comp_id)
 
-	def get_events_from_states(self, component: IComponent):
+	@staticmethod
+	def get_events_from_states(component: IComponent):
+		""" Get events and methods from the rendered widget"""
 
 		states = component.state
-		component.observers = observers = {}
+		component.observers = {}
 		events = {}
 		methods = {}
 
@@ -36,12 +40,9 @@ class IBuilder(metaclass=abc.ABCMeta):
 
 				if attr.startswith("on_"):
 
-					state = self.parse_state_name(attr)
-					if state in states:
-						initial_value = states.get(state)
-						state, event = get_state(initial_value)
-						observers.update({state: get_state(initial_value)})
-						events.update({state: method})
+					state_name = attr[3:]
+					if state_name in states:
+						events.update({state_name: method})
 					else:
 						events[attr] = method
 
@@ -50,7 +51,8 @@ class IBuilder(metaclass=abc.ABCMeta):
 
 		return events, methods
 
-	def build_component(self, component: IComponent, **kwargs):
+	def build_component(self, component: IComponent):
+		""" Build Component and save it on cache """
 
 		widget = None
 		content = component.render()
@@ -65,6 +67,9 @@ class IBuilder(metaclass=abc.ABCMeta):
 		events, methods = self.get_events_from_states(component)
 		widget.__dict__.update(methods)
 		widget.bind(**events)
-		component.app = self.app
+
+		if component.id:
+			self._component_cache.set(component.id, component)
+
 		return widget
 

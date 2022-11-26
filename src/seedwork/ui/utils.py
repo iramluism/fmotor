@@ -1,19 +1,16 @@
+""" Utils Module """
 
-from .events import State, StateObserver
-
-
-def get_state(initial_state):
-
-	event = StateObserver()
-	event.state = State(initial_state)
-	return event.state, event
+from .cache import ComponentCache
+from .app import IApp
 
 
 def get_running_app():
-	from .app import IApp
+	""" Get the app that is running currently """
 	return IApp.get_running_app()
 
 
 def get_component(_id):
-	app = get_running_app()
-	return app.root.ids.get(_id)
+	""" Get Component from cache """
+	cache = ComponentCache()
+	component = cache.get(_id)
+	return component
