@@ -1,93 +1,59 @@
 """ FMotor UI View Model Module """
 
 from dependency_injector.wiring import Provide
-
 from src.seedwork.ui.view_models import IViewModel
-from src.fmotor.ui.dtos import (
-	FilterMotorViewModelDTO,
-	MotorDetailViewModelDTO,
-	FilterMotorViewModelDTI,
-	MotorDetailViewModelDTI,
-	EstimateMotorPropertiesViewModelDTI,
-	EstimateMotorPropertiesViewModelDTO,
-	CalculateMotorPropertiesViewModelDTI,
-	CalculateMotorPropertiesViewModelDTO
-)
+from src.fmotor.application.dtos import MotorDTO, EstimateMotorDTI
+from src.fmotor.ui.utils import convert
 
-
-from src.fmotor.ui.components import (
-	FilterMotorDialogComponent,
-	MotorItemDialogComponent,
-	MotorDetailDialogComponent
-)
-
-
-class EstimateMotorPropertiesViewModel(IViewModel):
-	""" EstimateMotorPropertiesViewModel class """
-
-	@classmethod
-	def execute(cls, motor_properties: EstimateMotorPropertiesViewModelDTI
-	            ) -> EstimateMotorPropertiesViewModelDTO:
-
-		return EstimateMotorPropertiesViewModelDTO()
-
-
-class CalculateMotorPropertiesViewModel(IViewModel):
-	""" CalculateMotorPropertiesViewModel class """
-
-	@classmethod
-	def execute(cls, motor_properties: CalculateMotorPropertiesViewModelDTI
-	            ) -> CalculateMotorPropertiesViewModelDTO:
-		return CalculateMotorPropertiesViewModelDTO()
-
-
-class GetMotorDetailViewModel(IViewModel):
-	""" GetMotorDetailViewModel class """
-
-	dialog_component = MotorDetailDialogComponent
-
-	@classmethod
-	def execute(cls, motor_detail: MotorDetailViewModelDTI
-	            ) -> MotorDetailViewModelDTO:
-		""" Get Motor Details """
-
-		motor_detail_dto = MotorDetailViewModelDTO(
-			motor_id=5, model="dsfss", catalog="sdfdsf")
-
-		dialog = cls.dialog_component.build(
-			motor_details=motor_detail_dto.as_dict())
-
-		dialog.open()
-
-		return motor_detail_dto
+from .events import MotorListEvent, EstimateMotorEvent
 
 
 class FilterMotorViewModel(IViewModel):
 	""" FilterMotorViewModel class """
 
-	plot_motor_detail_view_model = Provide["plot_motor_detail_view_model"]
+	_filter_motor_query = Provide["filter_motor_query"]
+	_motor_cache = Provide["motor_cache"]
 
-	filter_motor_dialog_component = FilterMotorDialogComponent
-	filter_motor_item_dialog_component = MotorItemDialogComponent
+	def execute(self, motor: dict):
+		""" Get motors from model """
 
-	@classmethod
-	def execute(cls, motor_filters: FilterMotorViewModelDTI
-	            ) -> FilterMotorViewModelDTO:
+		try:
 
-		motors = [MotorDetailViewModelDTO(a,m,d) for a, m, d in [(1,"motor1", "description1"), (2, "motor2", "description2"), (3, "motor3", "description3"), (4, "motor1", "description1"), (5, "motor2", "description2"), (6, "motor3", "description3"), (7, "motor1", "description1"), (8, "motor2", "description2"), (9, "motor3", "description3")]]
-
-		items = []
-
-		for motor_dto in motors:
-			item = cls.filter_motor_item_dialog_component.build(
-				motor_id=motor_dto.motor_id,
-				text=motor_dto.model,
-				secondary_text=motor_dto.catalog
+			motor = MotorDTO(
+				type=convert(motor.get("motor_type"), str),
+				voltage=convert(motor.get("voltage"), float),
+				kw=convert(motor.get("kw"), float),
+				rpm=convert(motor.get("rpm"), float),
+				eff_fl=convert(motor.get("eff"), float),
+				pf_fl=convert(motor.get("pf"), float)
 			)
-			item.bind(on_press=cls.plot_motor_detail_view_model.execute)
-			items.append(item)
 
-		dialog = cls.filter_motor_dialog_component.build(items=items)
-		dialog.open()
+			filter_motor_dto = self._filter_motor_query.execute(motor)
 
-		return FilterMotorViewModelDTO(motors)
+			self._motor_cache.set("cur_motor", motor)
+
+			MotorListEvent.execute(filter_motor_dto.motors)
+
+		except Exception as e:
+			raise e
+
+
+class EstimateMotorViewModel(IViewModel):
+	""" EstimateMotorViewModel class """
+
+	_estimate_motor_command = Provide["estimate_motor_command"]
+	_motor_cache = Provide["motor_cache"]
+
+	def execute(self, motor):
+		""" Get estimated motor from model """
+
+		motor_eval = self._motor_cache.get("cur_motor")
+
+		estimate_motor_dti = EstimateMotorDTI(
+			motor_eval=motor_eval,
+			motor_ref=motor
+		)
+
+		estimated_values = self._estimate_motor_command.execute(estimate_motor_dti)
+
+		EstimateMotorEvent.execute(estimated_values)
