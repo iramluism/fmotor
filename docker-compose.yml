@@ -1,9 +1,9 @@
 version: "3.0"
 
 services:
-  fmotor_compiler:
+  fmotor_android_compiler:
     image: kivy/buildozer
-    container_name: fmotor_compiler
+    container_name: fmotor_android_compiler
     volumes:
-      - .:/home/user/hostcwd
+      - ./src:/home/user/hostcwd
     command: android debug deploy run
