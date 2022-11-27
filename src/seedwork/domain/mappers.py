@@ -72,9 +72,9 @@ class IMapper:
 			if default_values and field in default_values:
 				value = default_values[field]
 			elif mapping and field in mapping:
-				value = getattr(_from, mapping[field], None)
+				value = _from.get(mapping[field])
 			else:
-				value = getattr(_from, field, None)
+				value = _from.get(field)
 
 			if not value and missing_values and field in missing_values:
 				value = missing_values[field]

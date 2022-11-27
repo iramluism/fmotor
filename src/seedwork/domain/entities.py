@@ -25,6 +25,10 @@ class IEntity(metaclass=abc.ABCMeta):
 	@classmethod
 	def fields(cls) -> List[str]:
 		""" Return all fields of the entity """
-		return [field.name for field in fields(cls)]
+		return [field.name for field in cls.field_details()]
+
+	@classmethod
+	def field_details(cls):
+		return fields(cls)
 
 
