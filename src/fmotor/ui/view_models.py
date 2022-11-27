@@ -32,7 +32,7 @@ class FilterMotorViewModel(IViewModel):
 
 			self._motor_cache.set("cur_motor", motor)
 
-			MotorListEvent.execute(filter_motor_dto.motors)
+			MotorListEvent.execute(filter_motor_dto.as_dict().get("motors"))
 
 		except Exception as e:
 			raise e

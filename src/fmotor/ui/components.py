@@ -20,6 +20,7 @@ from kivymd.uix.button import (
 	MDIconButton
 )
 
+from src.fmotor.ui.utils import prepare_motor_values
 from src.seedwork.ui.components import IComponent
 
 
@@ -247,8 +248,7 @@ class MotorComponent(IComponent):
 	def refresh_data(self, motor: Optional[dict] = None) -> NoReturn:
 		""" Refresh Motor Values """
 
-		if not motor:
-			motor = {}
+		motor = prepare_motor_values(motor or {})
 
 		motor_label_text = {
 			"model": "[b]Model:[/b] %s " % motor.get("model"),
@@ -372,7 +372,7 @@ class EstimateMotorComponent(IComponent):
 		""" Refresh motor values """
 
 		content = self.widget.content_cls
-
+		motor = prepare_motor_values(motor)
 		motor_label_text = {
 			"voltage": "[b]Voltage:[/b] %s V" % motor.get("voltage"),
 			"kw": "[b]Power:[/b] %s kw" % motor.get("kw"),
