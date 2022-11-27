@@ -29,7 +29,7 @@ class FilterMotorQuery(IQuery):
 		closest_motors = self._get_nearest_motor_service.execute(motor_ref, motors)
 
 		filter_motor_dto = FilterMotorQueryDTO()
-		for motor in closest_motors:
+		for motor in closest_motors[:30]:
 			motor_dto = MotorMapper.create_dto(motor)
 			filter_motor_dto.motors.append(motor_dto)
 
