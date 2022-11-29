@@ -9,8 +9,7 @@ from src.seedwork.domain.entities import IEntity
 class MotorEntity(IEntity):
 	""" Motor Entity """
 
-	v_nom: float
-	rpm: float
+	rpm: float = None
 	motor_type: str = None
 	manufacturer: str = None
 	model: str = None
