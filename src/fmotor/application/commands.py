@@ -40,8 +40,10 @@ class EstimateMotorCommand(ICommand):
 	def execute(self, estimate_motor_dti: EstimateMotorDTI) -> MotorDTO:
 		""" Compare two motors to estimate values """
 
-		motor_eval = MotorMapper.create_entity(estimate_motor_dti.motor_eval)
-		motor_ref = MotorMapper.create_entity(estimate_motor_dti.motor_ref)
+		motor_eval = MotorMapper.create_aggregate(estimate_motor_dti.motor_eval)
+		motor_ref = MotorMapper.create_aggregate(estimate_motor_dti.motor_ref)
+
+		motor_ref = self._motor_repository.get(motor_ref.motor_id)
 
 		estimated_motor = self._estimate_motor_service.execute(motor_eval, motor_ref)
 
