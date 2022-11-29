@@ -18,15 +18,16 @@ class FilterMotorQuery(IQuery):
 		:param motor_ref: Reference Motor
 		"""
 
-		if motor_ref.motor_type:
-			motors = self._motor_repository.filters(
-				motor_type=motor_ref.motor_type)
-		else:
-			motors = self._motor_repository.all()
+		filters = {}
+		if motor_ref.v_nom:
+			filters["v_nom"] = motor_ref.v_nom
 
-		motor_ref = MotorMapper.create_entity(motor_ref)
+		motors = self._motor_repository.filter(**filters)
 
-		closest_motors = self._get_nearest_motor_service.execute(motor_ref, motors)
+		motor_ref = MotorMapper.create_aggregate(motor_ref)
+
+		closest_motors = \
+			self._get_nearest_motor_service.execute(motor_ref, motors)
 
 		filter_motor_dto = FilterMotorQueryDTO()
 		for motor in closest_motors[:30]:
