@@ -1,27 +1,18 @@
 """ Events Interfaces Module """
 
 import abc
-from kivy.event import EventDispatcher
+from kivy.clock import Clock
 
 
-class IEvent(EventDispatcher):
+class IEvent:
 	""" IEvent class """
 
-	def __init__(self,  **kwargs):
-		""" Register Event """
-		self.register_event_type("on_execute")
-		super().__init__(**kwargs)
-
 	@classmethod
-	def execute(cls, *args, **kwargs):
-		""" Execute event """
+	def dispatch(cls, *args, **kwargs):
+		""" Dispatch event """
 		event = cls()
-		event.dispatch("on_execute", (args, kwargs))
-
-	def on_execute(self, values):
-		""" handle event """
-		self.handle(*values[0], **values[1])
+		Clock.schedule_once(lambda e: cls.handle(event, *args, **kwargs), 0)
 
 	@abc.abstractmethod
 	def handle(self, *args, **kwargs):
-		pass
+		""" Handle event """
