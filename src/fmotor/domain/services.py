@@ -49,7 +49,7 @@ class GetMotorErrorService(IService):
 		""" Calculate the error between two motors """
 
 		error = 0
-		for field in ("rpm", "eff_fl", "pf_fl"):
+		for field in ("kw", "rpm", "eff_fl", "pf_fl"):
 			error += (motor_eval.get(field) / motor_ref.get(field) - 1) ** 2
 
 		return error
