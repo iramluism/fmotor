@@ -294,6 +294,8 @@ class MotorComponent(IComponent):
 	def calculate(self) -> NoReturn:
 		""" Handle calculate action """
 		self.dismiss()
+		form = CalculateFormComponent.build(self.motor)
+		form.open()
 
 	def render(self):
 		""" Render Motor Values in a Dialog """
