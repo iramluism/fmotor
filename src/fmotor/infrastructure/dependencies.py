@@ -26,6 +26,10 @@ class FMotorContainer(containers.DeclarativeContainer):
         "src.fmotor.ui.view_models.EstimateMotorViewModel"
     )
 
+    calculate_motor_view_model = providers.Factory(
+        "src.fmotor.ui.view_models.CalculateMotorViewModel"
+    )
+
     filter_motor_view_model = providers.Factory(
         "src.fmotor.ui.view_models.FilterMotorViewModel")
 
@@ -35,6 +39,9 @@ class FMotorContainer(containers.DeclarativeContainer):
 
     motor_repository = providers.Factory(
         "src.fmotor.infrastructure.repositories.MotorRepository")
+
+    voltage_range_repository = providers.Factory(
+        "src.fmotor.infrastructure.repositories.VoltageRangeRepository")
 
     get_nearest_motor_service = providers.Factory(
         "src.fmotor.domain.services.GetNearestMotorService")
@@ -50,3 +57,16 @@ class FMotorContainer(containers.DeclarativeContainer):
 
     estimate_motor_service = providers.Factory(
         "src.fmotor.domain.services.EstimateMotorService")
+
+    interpolate_motor_service = providers.Factory(
+        "src.fmotor.domain.services.InterpolateMotorService")
+
+    get_voltage_id_range_service = providers.Factory(
+        "src.fmotor.domain.services.GetVoltageIDRangeService")
+
+    calculate_motor_command = providers.Factory(
+        "src.fmotor.application.commands.CalculateMotorCommand")
+
+    interpolate_motor_validator = providers.Factory(
+        "src.fmotor.domain.validations.InterpolateMotorValidator")
+
