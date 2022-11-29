@@ -286,12 +286,12 @@ class MotorComponent(IComponent):
 
 		self.motor = motor
 
-	def estimate(self, *args) -> NoReturn:
+	def estimate(self) -> NoReturn:
 		""" Handle Estimate action """
 		self.dismiss()
 		self._estimate_motor_view_model.execute(self.motor)
 
-	def calculate(self, **args) -> NoReturn:
+	def calculate(self) -> NoReturn:
 		""" Handle calculate action """
 		self.dismiss()
 
@@ -310,11 +310,11 @@ class MotorComponent(IComponent):
 			buttons=[
 				MDIconButton(
 					icon="text-box-search-outline",
-					on_press=self.estimate
+					on_press=lambda e: self.estimate()
 				),
 				MDIconButton(
 					icon="calculator",
-					on_press=self.calculate
+					on_press=lambda e: self.calculate()
 				),
 			]
 		)
