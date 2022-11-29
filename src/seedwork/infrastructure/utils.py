@@ -43,7 +43,7 @@ def build_conditions(filters: dict):
 
 		operation = operations_map.get(op)
 		if not operation:
-			raise TypeError("Operator %s not is valid" % op)
+			raise TypeError("Operator '%s' is not valid" % op)
 
 		cond = operation(field, value)
 
