@@ -164,7 +164,7 @@ class ListMotorComponent(IComponent):
 		super().__init__()
 		self.motors = motors
 
-	def set_finding_component(self):
+	def set_spinner_component(self):
 		spinner = MDScreen(
 			MDSpinner(
 				size_hint=(None, None),
