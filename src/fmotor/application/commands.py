@@ -3,8 +3,32 @@
 from dependency_injector.wiring import Provide
 
 from src.seedwork.application.commands import ICommand
-from src.fmotor.application.mappers import MotorMapper
-from src.fmotor.application.dtos import EstimateMotorDTI, MotorDTO
+
+from src.fmotor.application.mappers import MotorMapper, MotorMeasurementMapper
+
+from src.fmotor.application.dtos import (
+	EstimateMotorDTI,
+	MotorDTO,
+	CalculateMotorDTO
+)
+
+
+class CalculateMotorCommand(ICommand):
+	""" CalculateMotorCommand class """
+
+	_calculate_motor_service = Provide["interpolate_motor_service"]
+
+	def execute(self, calculate_motor_dti: CalculateMotorDTO
+	            ) -> CalculateMotorDTO:
+		""" Calculate Motor values for a given load """
+
+		measurement = MotorMeasurementMapper.create_entity(calculate_motor_dti)
+
+		motor_values = self._calculate_motor_service.execute(measurement)
+
+		motor_values_dto = MotorMeasurementMapper.create_dto(motor_values)
+
+		return motor_values_dto
 
 
 class EstimateMotorCommand(ICommand):
