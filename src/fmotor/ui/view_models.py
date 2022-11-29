@@ -7,10 +7,21 @@ import threading
 
 from dependency_injector.wiring import Provide
 from src.seedwork.ui.view_models import IViewModel
-from src.fmotor.application.dtos import MotorDTO, EstimateMotorDTI
-from src.fmotor.ui.utils import convert
+from src.fmotor.ui.utils import convert, parse_error_messages
 
-from .events import MotorListEvent, EstimateMotorEvent
+from src.fmotor.application.dtos import (
+	MotorDTO,
+	EstimateMotorDTI,
+	CalculateMotorDTO
+)
+
+from .events import (
+	MotorListEvent,
+	EstimateMotorEvent,
+	FilterMotorEvent,
+	CalculateMotorEvent,
+	ErrorEvent
+)
 
 
 class FilterMotorViewModel(IViewModel):
@@ -60,16 +71,56 @@ class EstimateMotorViewModel(IViewModel):
 	_estimate_motor_command = Provide["estimate_motor_command"]
 	_motor_cache = Provide["motor_cache"]
 
-	def execute(self, motor):
-		""" Get estimated motor from model """
-
+	def estimate_motor(self, motor):
 		motor_eval = self._motor_cache.get("cur_motor")
 
 		estimate_motor_dti = EstimateMotorDTI(
-			motor_eval=motor_eval,
-			motor_ref=motor
+			motor_eval=MotorDTO(**motor_eval),
+			motor_ref=MotorDTO(**motor)
 		)
 
-		estimated_values = self._estimate_motor_command.execute(estimate_motor_dti)
+		estimated_values = self._estimate_motor_command.execute(
+			estimate_motor_dti)
 
-		EstimateMotorEvent.execute(estimated_values)
+		return estimated_values.as_dict()
+
+	def execute(self, motor):
+		""" Get estimated motor from model """
+
+		estimated_values = self.estimate_motor(motor)
+		EstimateMotorEvent.dispatch(estimated_values)
+
+
+class CalculateMotorViewModel(IViewModel):
+
+	_calculate_motor_command = Provide["calculate_motor_command"]
+	_estimate_motor_command = Provide["estimate_motor_command"]
+	_motor_cache = Provide["motor_cache"]
+
+	def execute(self, motor: dict, current):
+
+		motor_eval = self._motor_cache.get("cur_motor")
+
+		try:
+
+			estimate_motor_dti = EstimateMotorDTI(
+				motor_eval=MotorDTO(**motor_eval),
+				motor_ref=MotorDTO(**motor)
+			)
+
+			estimated_motor = \
+				self._estimate_motor_command.execute(estimate_motor_dti)
+
+			calculate_motor_dti = CalculateMotorDTO(
+				motor=estimated_motor,
+				current=convert(current, float)
+			)
+
+			calculated_motor = self._calculate_motor_command.execute(
+				calculate_motor_dti)
+
+		except Exception as e:
+			messages = parse_error_messages(e)
+			ErrorEvent.dispatch(messages)
+		else:
+			CalculateMotorEvent.dispatch(calculated_motor.as_dict())
