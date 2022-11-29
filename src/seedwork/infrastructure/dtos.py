@@ -15,7 +15,7 @@ class IDTO:
 		return asdict(self)
 
 	def get(self, field: str, default_value: Optional[Any] = None) -> Any:
-		return self.__getattribute__(field) or default_value
+		return getattr(self, field, default_value)
 
 	def set(self, field: str, value: Any) -> NoReturn:
 		self.__setattr__(field, value)
