@@ -11,7 +11,7 @@ class IMapper:
 	""" IMapper class """
 
 	@classmethod
-	def map_to_dict(cls, _from, excluded_fields=None, missing_values=None,
+	def map_to_dict(cls, _from, mapping=None, excluded_fields=None, missing_values=None,
 	                default_values=None):
 
 		if not missing_values:
@@ -37,6 +37,7 @@ class IMapper:
 		to_obj = cls.map_objs(
 			_from=_from, _to=to_obj_class,
 			missing_values=missing_values,
+			mapping=mapping,
 			default_values=default_values,
 		)
 
@@ -95,6 +96,9 @@ class IMapper:
 	@staticmethod
 	def get_fields(obj: Any) -> list:
 		""" get all field of an object or a class"""
+
+		if isinstance(obj, dict):
+			return list(obj.keys())
 
 		if dataclasses.is_dataclass(obj):
 			return [field.name for field in dataclasses.fields(obj)]
