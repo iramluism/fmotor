@@ -349,6 +349,7 @@ class MotorDataTableComponent(IComponent):
 
 		datatable.update_row(datatable.row_data[0], new_data[0])
 		datatable.update_row(datatable.row_data[1], new_data[1])
+		datatable.update_row(datatable.row_data[2], new_data[2])
 
 	def _get_table_data(self, motor: Optional[dict] = None) -> NoReturn:
 		""" Get rows from motor values """
@@ -356,16 +357,19 @@ class MotorDataTableComponent(IComponent):
 		if not motor:
 			motor = self.motor
 
-		eff_row, pf_row = ["Eff"], ["PF"]
+		eff_row, pf_row, amps_row = ["Eff"], ["PF"], ["Amps"]
 
 		for load in ("fl", "75", "50", "25"):
-			eff_col = "eff_%s" % load
-			eff_row.append(motor.get(eff_col, ""))
+			eff = motor.get("eff_%s" % load)
+			eff_row.append(eff or "")
 
-			pf_col = "pf_%s" % load
-			pf_row.append(motor.get(pf_col, ""))
+			pf = motor.get("pf_%s" % load)
+			pf_row.append(pf or "")
 
-		return eff_row, pf_row
+			amps = motor.get("i_%s" % load)
+			amps_row.append(amps or "")
+
+		return eff_row, pf_row, amps_row
 
 	def render(self) -> MDDataTable:
 		""" Render Efficiency and power factor table of a given motor """
