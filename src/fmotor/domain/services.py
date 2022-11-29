@@ -1,16 +1,14 @@
 """ Fmotor Domain Services Module """
 
+import math
+
 from typing import List
 from dependency_injector.wiring import Provide
 
 from src.seedwork.domain.services import IService
-from .entities import MotorEntity
+from .entities import MotorEntity, MotorMeasurement
 from .mappers import EstimateMotorMapper
-
-
-class GetExactVoltageService(IService):
-	""" GetExactVoltageService class """
-
+from .utils import linear_interpolation
 from .aggregates import MotorAggregate
 
 
@@ -83,3 +81,61 @@ class EstimateMotorService(IService):
 		motor.i_0 = motor.i_fl * ki0
 
 		return motor
+
+
+class InterpolateMotorService(IService):
+	""" InterpolateMotorService """
+
+	_interpolate_motor_validation = Provide["interpolate_motor_validator"]
+
+	def execute(self, measurement: MotorMeasurement) -> MotorMeasurement:
+		""" Calculate power out, power factor, power in, lost and efficiency
+		for a given load connected to a motor.
+		:param measurement: motor measurement, when current and motor are mandatory
+		"""
+
+		self._interpolate_motor_validation.execute(measurement)
+
+		motor = measurement.motor
+
+		i_ranges = [
+			(.25, motor.i_25, motor.eff_25, motor.pf_25),
+			(.5, motor.i_50, motor.eff_50, motor.pf_50),
+			(.75, motor.i_75, motor.eff_75, motor.pf_75),
+			(1, motor.i_fl, motor.eff_fl, motor.pf_fl)
+		]
+
+		i_x = measurement.current
+
+		idx_up = None
+		for idx, current in enumerate(i_ranges):
+			i = current[1]
+			if i and i_x <= i:
+				idx_up = idx
+
+		measurement_x = MotorMeasurement(motor=motor, current=i_x)
+
+		kc_up, i_up, eff_up, pf_up = i_ranges[idx_up]
+		kc_down, i_down, eff_down, pf_down = i_ranges[idx_up - 1]
+		if kc_up and kc_down:
+			measurement_x.kc = linear_interpolation(
+				(i_down, kc_down), (i_up, kc_up), i_x)
+
+		if eff_up and eff_down:
+			measurement_x.eff = linear_interpolation(
+				(i_down, eff_down), (i_up, eff_up), i_x)
+
+		if pf_up and pf_down:
+			measurement_x.pf = linear_interpolation(
+				(i_down, pf_down), (i_up, pf_up), i_x)
+
+		if measurement_x.kc:
+			measurement_x.p_out = measurement_x.kc * motor.hp_nom / 1.341
+
+		if measurement_x.p_out and measurement_x.eff:
+			measurement_x.p_in = measurement_x.p_out / measurement_x.eff
+
+		if measurement_x.p_in and measurement_x.p_out:
+			measurement_x.lost = measurement_x.p_in - measurement_x.p_out
+
+		return measurement_x
