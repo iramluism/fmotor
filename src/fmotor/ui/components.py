@@ -20,6 +20,8 @@ from kivymd.uix.button import (
 	MDIconButton
 )
 
+from kivymd.uix.spinner import MDSpinner
+
 from src.fmotor.ui.utils import prepare_motor_values
 from src.seedwork.ui.components import IComponent
 
@@ -159,6 +161,18 @@ class ListMotorComponent(IComponent):
 		"""
 		super().__init__()
 		self.motors = motors
+
+	def set_finding_component(self):
+		spinner = MDScreen(
+			MDSpinner(
+				size_hint=(None, None),
+				size=(dp(46), dp(46)),
+				pos_hint={'center_x': .5, 'center_y': .5},
+			)
+		)
+		layout = self.widget
+		layout.clear_widgets()
+		layout.add_widget(spinner)
 
 	def refresh_data(self, motors: List[dict]) -> NoReturn:
 		""" Refresh all motors in the list"""
