@@ -1,7 +1,7 @@
 """ Fmotor Domain Validation Module """
 
 from src.seedwork.domain.validations import IValidator
-from .entities import MotorEntity
+from .entities import MotorEntity, MotorMeasurement
 
 
 class MotorValidator(IValidator):
@@ -12,8 +12,19 @@ class MotorValidator(IValidator):
 
 		if not motor.hp_nom:
 			self.add_error("no declared Power")
-		if not motor.v_nom:
-			self.add_error("no declared Voltage")
+
+		if raise_error and not self.is_valid():
+			self.raise_errors()
+
+
+class InterpolateMotorValidator(IValidator):
+
+	def execute(self, measurement: MotorMeasurement, raise_error=True):
+
+		motor = measurement.motor
+
+		if measurement.current > motor.i_fl:
+			self.add_error("the Current greater than nominal")
 
 		if raise_error and not self.is_valid():
 			self.raise_errors()
