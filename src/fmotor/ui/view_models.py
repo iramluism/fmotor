@@ -1,5 +1,10 @@
 """ FMotor UI View Model Module """
 
+
+import time
+import threading
+
+
 from dependency_injector.wiring import Provide
 from src.seedwork.ui.view_models import IViewModel
 from src.fmotor.application.dtos import MotorDTO, EstimateMotorDTI
@@ -14,25 +19,36 @@ class FilterMotorViewModel(IViewModel):
 	_filter_motor_query = Provide["filter_motor_query"]
 	_motor_cache = Provide["motor_cache"]
 
+	def filter_motors(self, motor):
+
+		FilterMotorEvent.dispatch()
+
+		time.sleep(0.2)
+
+		filter_motor_dto = self._filter_motor_query.execute(motor)
+
+		self._motor_cache.set("cur_motor", motor.as_dict())
+
+		motors = filter_motor_dto.as_dict().get("motors")
+
+		MotorListEvent.dispatch(motors)
+
 	def execute(self, motor: dict):
 		""" Get motors from model """
 
 		try:
-
 			motor = MotorDTO(
 				type=convert(motor.get("motor_type"), str),
-				voltage=convert(motor.get("voltage"), float),
+				v_nom=convert(motor.get("voltage"), float),
 				kw=convert(motor.get("kw"), float),
 				rpm=convert(motor.get("rpm"), float),
 				eff_fl=convert(motor.get("eff"), float),
 				pf_fl=convert(motor.get("pf"), float)
 			)
 
-			filter_motor_dto = self._filter_motor_query.execute(motor)
-
-			self._motor_cache.set("cur_motor", motor)
-
-			MotorListEvent.execute(filter_motor_dto.as_dict().get("motors"))
+			thread = threading.Thread(
+				target=self.filter_motors, args=[motor])
+			thread.start()
 
 		except Exception as e:
 			raise e
