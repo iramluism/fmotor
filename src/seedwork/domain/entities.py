@@ -10,8 +10,8 @@ from dataclasses import asdict, fields
 class IEntity(metaclass=abc.ABCMeta):
 	""" IEntity class """
 
-	def get(self, field: str) -> Any:
-		return getattr(self, field)
+	def get(self, field: str, default_value=None) -> Any:
+		return getattr(self, field, default_value)
 
 	def set(self, field: str, value: Any) -> NoReturn:
 		setattr(self, field, value)
