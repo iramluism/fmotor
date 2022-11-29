@@ -215,7 +215,7 @@ class MotorFormComponent(IComponent):
 		""" Get input values in the form """
 
 		motor_inputs = {}
-		for field in ("motor_type", "voltage", "kw", "rpm", "eff", "pf"):
+		for field in ("voltage", "kw", "rpm", "eff", "pf"):
 			widget = self.content_cls.ids.get(field)
 			motor_inputs[field] = widget.text
 

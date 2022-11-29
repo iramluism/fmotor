@@ -3,11 +3,11 @@ MDBoxLayout:
     orientation: "vertical"
     spacing: "12dp"
     size_hint_y: None
-    height: "450dp"
+    height: "350dp"
 
-    MDTextField:
-        id: motor_type
-        hint_text: "Type"
+#    MDTextField:
+#        id: motor_type
+#        hint_text: "Type"
 
     MDTextField:
         id: voltage
@@ -17,17 +17,19 @@ MDBoxLayout:
 	MDTextField:
 	    id: kw
 		hint_text: "Power (kw)"
-		text: "1800"
+		text: "1.8"
 
 	MDTextField:
 	    id: rpm
 		hint_text: "RPM"
-		text: "1800"
+		text: "900"
 
 	MDTextField:
 	    id: eff
-		hint_text: "Efficiency"
+		hint_text: "Efficiency (%)"
+		text: "90"
 
 	MDTextField:
 	    id: pf
-		hint_text: "Power Factor"
+		hint_text: "Power Factor (%)"
+		text: "90"
