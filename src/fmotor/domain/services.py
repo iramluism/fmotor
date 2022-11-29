@@ -11,24 +11,7 @@ from .mappers import EstimateMotorMapper
 class GetExactVoltageService(IService):
 	""" GetExactVoltageService class """
 
-	def execute(self, voltage: float) -> int:
-		""" Return Voltage Id from a given voltage """
-
-		voltage_range = {
-			200: [2],
-			208: [4, 5],
-			220: [11],
-			230: [4, 5, 12],
-			440: [11],
-			460: [6, 7, 12, 13],
-			575: [8],
-			796: [12, 13],
-			2300: [9, 14],
-			4000: [10, 14, 15]
-		}
-
-		max_v = max(voltage_range, key=lambda v: v <= voltage)
-		return min(voltage_range[max_v])
+from .aggregates import MotorAggregate
 
 
 class GetNearestMotorService(IService):
@@ -75,9 +58,28 @@ class GetMotorErrorService(IService):
 class EstimateMotorService(IService):
 	""" EstimateMotorService class """
 
-	def execute(self, motor_eval: MotorEntity, motor_ref: MotorEntity
-	            ) -> MotorEntity:
+	def execute(self, motor_eval: MotorAggregate, motor_ref: MotorAggregate
+	            ) -> MotorAggregate:
 		""" Estimate motor values using two motors """
 
 		motor = EstimateMotorMapper.create_motor(motor_eval, motor_ref)
+
+		watts_nom = motor.kw * 1000
+
+		motor.i_fl = 100 * watts_nom / (
+				math.sqrt(3) * motor.v_nom * motor.eff_fl * motor.pf_fl)
+
+		motor.i_75 = 75 * watts_nom / (
+				math.sqrt(3) * motor.v_nom * motor.eff_75 * motor.pf_75)
+
+		motor.i_50 = 50 * watts_nom / (
+				math.sqrt(3) * motor.v_nom * motor.eff_50 * motor.pf_50)
+
+		motor.i_25 = 25 * watts_nom / (
+				math.sqrt(3) * motor.v_nom * motor.eff_25 * motor.pf_25)
+
+		ki0 = motor.i_idle / motor.i_fl
+
+		motor.i_0 = motor.i_fl * ki0
+
 		return motor
