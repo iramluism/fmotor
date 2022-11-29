@@ -18,6 +18,11 @@ class MotorEntity(IEntity):
 	design: str = None
 	hp_nom: float = None
 	kw: float = None
+	i_idle: float = None
+	i_fl: float = None
+	i_75: float = None
+	i_50: float = None
+	i_25: float = None
 	eff_fl: float = 1
 	eff_75: float = 1
 	eff_50: float = 1
