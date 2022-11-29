@@ -6,10 +6,11 @@ from dependency_injector.wiring import Provide
 from kivymd.material_resources import dp
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.floatlayout import MDFloatLayout
+from kivymd.uix.gridlayout import MDGridLayout
 from kivymd.uix.label import MDLabel
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.toolbar import MDTopAppBar
-from kivymd.uix.list import MDList, IconLeftWidget
+from kivymd.uix.list import MDList, IconLeftWidget, OneLineAvatarListItem
 from kivymd.uix.list import TwoLineAvatarIconListItem
 from kivymd.uix.scrollview import MDScrollView
 from kivymd.uix.datatables import MDDataTable
@@ -38,6 +39,7 @@ class FMotorAppComponent(IComponent):
 		MotorFormComponent.build()
 		MotorComponent.build()
 		EstimateMotorComponent.build()
+		ErrorDialogComponent.build()
 
 		root = MDScreen(
 			MDFloatLayout(
@@ -412,6 +414,96 @@ class EstimateMotorComponent(IComponent):
 		content.ids["datatable"] = datatable
 
 		self.widget = dialog = MDDialog(title="Estimated Motor", type="custom",
-		                                size_hint=[0.9, None], content_cls=content)
+		                                size_hint=[0.9, None],
+		                                content_cls=content)
+
+		return dialog
+
+
+class CalculateFormComponent(IComponent):
+	id = "calculate_form"
+
+	_calculate_motor_view_model = Provide["calculate_motor_view_model"]
+
+	def __init__(self, motor):
+		super().__init__()
+		self.motor = motor
+
+	def refresh_data(self, motor):
+		layout = self.content_cls
+		content = layout.ids.get("content")
+
+		motor = prepare_motor_values(motor)
+
+		label_args = {
+			"markup": True,
+			"halign": "center",
+			"theme_text_color": "Hint",
+		}
+
+		content.clear_widgets()
+
+		content.add_widget(
+			MDGridLayout(
+				MDLabel(text="[b]Load Factor:[/b] %s " % motor.get("kc"),
+				        **label_args),
+				MDLabel(text="[b]Power Factor:[/b] %s " % motor.get("pf"),
+				        **label_args),
+				MDLabel(text="[b]Efficiency:[/b] %s " % motor.get("eff"),
+				        **label_args),
+				MDLabel(text="[b]Power Out:[/b] %s kw" % motor.get("p_out"),
+				        **label_args),
+				MDLabel(text="[b]Power In:[/b] %s kw" % motor.get("p_in"),
+				        **label_args),
+				MDLabel(text="[b]Lost:[/b] %s kw" % motor.get("lost"),
+				        **label_args),
+				cols=2,
+			)
+		)
+
+	def calculate(self):
+		layout = self.content_cls
+		current = layout.ids.get("current")
+		self._calculate_motor_view_model.execute(self.motor, current.text)
+
+	def render(self):
+		content = self.builder.load_file("fmotor/ui/widgets/calculate.kv")
+
+		self.widget = dialog = MDDialog(
+			title="Calculate Motor", type="custom",
+			size_hint=[0.9, None],
+			content_cls=content,
+			buttons=[
+				MDFlatButton(
+					text="CANCEL", theme_text_color="Custom",
+					on_press=lambda e: self.dismiss()
+				),
+				MDFlatButton(
+					text="CALCULATE", theme_text_color="Custom",
+					on_press=lambda e: self.calculate()
+				)
+			]
+		)
+
+		return dialog
+
+
+class ErrorDialogComponent(IComponent):
+	id = "error_dialog"
+
+	def __init__(self, errors: Optional[list] = None):
+		super().__init__()
+		self.errors = errors or []
+
+	def add_errors(self, errors):
+		self.errors = errors
+		dialog = self.widget
+
+		items = [OneLineAvatarListItem(text=error) for error in self.errors]
+		dialog.update_items(items)
+
+	def render(self):
+		dialog = MDDialog(title="Error", type="custom",
+		                  size_hint=[0.9, None])
 
 		return dialog
