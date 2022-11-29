@@ -32,3 +32,23 @@ class MotorEntity(IEntity):
 	pf_50: float = 1
 	pf_25: float = 1
 	id: int = None
+
+
+@dataclasses.dataclass()
+class VoltageRangeEntity(IEntity):
+	description: str
+	match_list: str
+	v_nom: float = None
+	id: int = None
+
+
+@dataclasses.dataclass()
+class MotorMeasurement(IEntity):
+	motor: MotorEntity
+	current: float
+	kc: float = None
+	pf: float = None
+	eff: float = None
+	p_out: float = None
+	p_in: float = None
+	lost: float = None
