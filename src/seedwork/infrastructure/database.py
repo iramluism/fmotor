@@ -20,13 +20,17 @@ class SQLiteManager(DatabaseManager):
 	""" SQLiteManager class """
 
 	def __init__(self, db_path):
-		self.conn = sqlite3.connect(db_path)
+		self.db_path = db_path
+		self._conn = None
 		self._cur = None
 
 	def close(self):
 		""" close cursor connection """
 		if self._cur:
 			self._cur.close()
+
+	def connect(self):
+		self._conn = sqlite3.connect(self.db_path)
 
 	def get_list(self, table, filters: Optional[dict] = None,
 	             fields: Optional[dict] = None, as_dict: bool = False,
@@ -67,7 +71,10 @@ class SQLiteManager(DatabaseManager):
 
 	def execute(self, query: str):
 		""" Execute sql query """
-		cur = self.conn.cursor()
+
+		self.connect()
+		cur = self._conn.cursor()
 		response = cur.execute(query)
+		self._cur = cur
 		return response
 
