@@ -11,7 +11,7 @@ class MotorEntity(IEntity):
 
 	rpm: float = None
 	motor_type: str = None
-	manufacturer: str = None
+	manufacturer_id: str = None
 	model: str = None
 	catalog: str = None
 	frame: str = None
