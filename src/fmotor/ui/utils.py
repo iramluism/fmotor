@@ -24,3 +24,20 @@ def prepare_motor_values(motor: dict) -> dict:
 		if value:
 			motor[field] = round(value, 2)
 	return motor
+
+
+def parse_error_messages(e) -> list:
+	""" Get error message from exception
+	:param e: Exception instance
+	"""
+
+	messages = []
+	errors = e.args[0]
+
+	for error in errors:
+		if isinstance(error, str):
+			messages.append(error)
+		elif "message" in error:
+			messages.append(error.get("message"))
+
+	return messages
