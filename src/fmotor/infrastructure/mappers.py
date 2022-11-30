@@ -48,6 +48,7 @@ class DBMotorMapper(IMapper):
 				"hp_nom": "hp",
 				"i_idle": "amps_idle",
 				"i_fl": "amps_fl",
+				"design": "nemadesign"
 			},
 			default_values={
 				"kw": float(motor.get("hp")) * 1.34,
