@@ -32,15 +32,11 @@ class DBMotorMapper(IMapper):
 		return _filters
 
 	@classmethod
-	def create_aggregate(cls, motor: Optional[dict] = None,
-	                     voltage_range: Optional[dict] = None):
+	def create_aggregate(cls, motor: Optional[dict] = None) -> MotorAggregate:
 		""" Create aggregate from motor and voltage range saved on database """
 
 		if not motor:
 			motor = {}
-
-		if not voltage_range:
-			voltage_range = {}
 
 		motor_aggregate = cls.map_objs(
 			_from=motor, _to=MotorAggregate,
@@ -51,9 +47,7 @@ class DBMotorMapper(IMapper):
 				"design": "nemadesign"
 			},
 			default_values={
-				"kw": float(motor.get("hp")) * 1.34,
-				"v_nom": voltage_range.get("v_nom"),
-				"voltage": voltage_range.get("description"),
+				"kw": float(motor.get("hp", 0)) * 1.34,
 			}
 		)
 
@@ -63,18 +57,6 @@ class DBMotorMapper(IMapper):
 				motor_aggregate.set(field.name, field.type(value))
 
 		return motor_aggregate
-
-	@classmethod
-	def create_aggregates(cls, motors: Optional[List[dict]] = None,
-	                      voltage_range: Optional[dict] = None):
-		""" Create Aggregates from motor list saved on database """
-
-		motor_entities = []
-		for motor in motors:
-			motor_entity = cls.create_aggregate(motor, voltage_range)
-			motor_entities.append(motor_entity)
-
-		return motor_entities
 
 
 class DBVoltageRangeMapper(IMapper):
