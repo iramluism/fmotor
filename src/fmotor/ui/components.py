@@ -176,10 +176,10 @@ class ListMotorComponent(IComponent):
 		layout.clear_widgets()
 		layout.add_widget(spinner)
 
-	def refresh_data(self, motors: List[dict]) -> NoReturn:
+	def refresh_data(self, motors: Optional[List[dict]] = None) -> NoReturn:
 		""" Refresh all motors in the list"""
 
-		self.motors = motors
+		self.motors = motors or []
 
 		layout = self.widget
 		layout.clear_widgets()
