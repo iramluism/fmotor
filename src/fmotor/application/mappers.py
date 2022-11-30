@@ -15,18 +15,22 @@ class MotorMapper(IMapper):
 	def create_aggregate(cls, motor_dto: MotorDTO) -> MotorAggregate:
 		""" Create Motor entity from Motor DTO """
 
-		missing_values = {}
+		default_values = {}
 		if motor_dto.kw and not motor_dto.hp_nom:
-			missing_values["hp_nom"] = motor_dto.kw * 1.34
+			default_values["hp_nom"] = motor_dto.kw * 1.34
 		elif motor_dto.hp_nom and not motor_dto.kw:
-			missing_values["kw"] = motor_dto.hp_nom / 1.34
+			default_values["kw"] = motor_dto.hp_nom / 1.34
+
 		if motor_dto.id:
-			missing_values["motor_id"] = decrypt_motor_id(motor_dto.id)
+			default_values["motor_id"] = decrypt_motor_id(motor_dto.id)
 
 		motor_entity = cls.map_objs(
 			_from=motor_dto,
 			_to=MotorAggregate,
-			missing_values=missing_values
+			mapping={
+				"motor_type": "type"
+			},
+			default_values=default_values
 		)
 
 		return motor_entity
