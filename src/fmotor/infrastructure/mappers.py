@@ -3,7 +3,7 @@
 from typing import List, Optional
 
 from src.seedwork.domain.mappers import IMapper
-from src.fmotor.domain.entities import VoltageRangeEntity
+from src.fmotor.domain.entities import VoltageRangeEntity, ManufacturerEntity
 from src.fmotor.domain.aggregates import MotorAggregate
 from .utils import get_voltage_from_id
 
@@ -99,12 +99,33 @@ class DBVoltageRangeMapper(IMapper):
 
 		return entity
 
-	@classmethod
-	def create_entities(cls, voltages: Optional[List[dict]] = None):
-		""" Create voltage from voltage range list saved on database """
-		voltage_entities = []
-		for voltage in voltages or []:
-			voltage_entity = cls.create_entity(voltage)
-			voltage_entities.append(voltage_entity)
 
-		return voltage_entities
+class DBManufacturerMapper(IMapper):
+	""" DBManufacturerMapper class """
+
+	@classmethod
+	def map_filters(cls, filters):
+		""" map filters between voltage range entity fields
+		and the fields on database """
+
+		_filters = cls.map_to_dict(
+			_from=filters,
+			mapping={
+				"manufacturer_id": "id"
+			}
+		)
+
+		return _filters
+
+	@classmethod
+	def create_entity(cls, manufacturer: dict):
+		""" Create entity form voltage saved on database """
+
+		entity = cls.map_objs(
+			_from=manufacturer, _to=ManufacturerEntity,
+			mapping={
+				"id": "manufacturer_id",
+			}
+		)
+
+		return entity

@@ -40,6 +40,9 @@ class FMotorContainer(containers.DeclarativeContainer):
     motor_repository = providers.Factory(
         "src.fmotor.infrastructure.repositories.MotorRepository")
 
+    manufacturer_repository = providers.Factory(
+        "src.fmotor.infrastructure.repositories.ManufacturerRepository")
+
     voltage_range_repository = providers.Factory(
         "src.fmotor.infrastructure.repositories.VoltageRangeRepository")
 

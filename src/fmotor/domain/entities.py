@@ -43,6 +43,12 @@ class VoltageRangeEntity(IEntity):
 
 
 @dataclasses.dataclass()
+class ManufacturerEntity(IEntity):
+	name: str
+	id: int = None
+
+
+@dataclasses.dataclass()
 class MotorMeasurement(IEntity):
 	motor: MotorEntity
 	current: float
