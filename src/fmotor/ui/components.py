@@ -18,7 +18,7 @@ from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.button import (
 	MDFlatButton,
 	MDFloatingActionButton,
-	MDIconButton
+	MDIconButton, MDRaisedButton
 )
 
 from kivymd.uix.spinner import MDSpinner
@@ -236,8 +236,8 @@ class MotorFormComponent(IComponent):
 			text="CANCEL", theme_text_color="Custom",
 			on_press=self._on_press_cancel_button)
 
-		filter_button = MDFlatButton(
-			text="Filter", theme_text_color="Custom",
+		filter_button = MDRaisedButton(
+			text="FILTER", theme_text_color="Custom", text_color="white",
 			on_press=self._on_press_filter_button)
 
 		dialog = MDDialog(
@@ -484,8 +484,9 @@ class CalculateFormComponent(IComponent):
 					text="CANCEL", theme_text_color="Custom",
 					on_press=lambda e: self.dismiss()
 				),
-				MDFlatButton(
+				MDRaisedButton(
 					text="CALCULATE", theme_text_color="Custom",
+					text_color="white",
 					on_press=lambda e: self.calculate()
 				)
 			]
