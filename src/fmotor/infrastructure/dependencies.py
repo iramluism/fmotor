@@ -61,9 +61,6 @@ class FMotorContainer(containers.DeclarativeContainer):
     interpolate_motor_service = providers.Factory(
         "src.fmotor.domain.services.InterpolateMotorService")
 
-    get_voltage_id_range_service = providers.Factory(
-        "src.fmotor.domain.services.GetVoltageIDRangeService")
-
     calculate_motor_command = providers.Factory(
         "src.fmotor.application.commands.CalculateMotorCommand")
 
