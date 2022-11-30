@@ -50,7 +50,7 @@ class FilterMotorEvent(IEvent):
 		""" Add to list component a spinner """
 		list_motor_component = get_component("list_motor")
 		list_motor_component.set_spinner_component()
-		Clock.schedule_once(lambda e: FilterMotorTimeOutEvent.dispatch(), 10)
+		Clock.schedule_once(lambda e: FilterMotorTimeOutEvent.dispatch(), 15)
 
 
 class CalculateMotorEvent(IEvent):
