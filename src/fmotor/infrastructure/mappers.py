@@ -20,8 +20,8 @@ class DBMotorMapper(IMapper):
 			_from=filters,
 			mapping={
 				"motor_id": "id",
-				"manufacturer_id": "manufacturer",
 				"hp": "hp_nom",
+				"nemadesign": "design"
 			},
 			missing_values={
 				"hp": filters.get("kw", 0) * 1.341
