@@ -45,7 +45,13 @@ class GetMotorErrorService(IService):
 
 		error = 0
 		for field in ("kw", "rpm", "eff_fl", "pf_fl"):
-			error += (motor_eval.get(field) / motor_ref.get(field) - 1) ** 2
+			motor_ref_value = motor_ref.get(field)
+			motor_eval_value = motor_eval.get(field)
+
+			if motor_ref_value and motor_eval_value:
+				error += (motor_eval.get(field) / motor_ref.get(field) - 1) ** 2
+			else:
+				error += 1
 
 		return error
 
