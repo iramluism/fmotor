@@ -20,3 +20,20 @@ def linear_interpolation(
 	y = (y2 - y1) / (x2 - x1) * (x - x1) + y1
 
 	return y
+
+
+def calculate_three_phase_current(p: float, v: float,
+                                  eff: Optional[float] = None,
+                                  pf: Optional[float] = None):
+	""" Calculate Three Phase current
+	:param p: power (watts)
+	:param v: voltage (V)
+	:param eff: efficiency, by default 1
+	:param pf: power factor, by default 1
+	"""
+
+	eff = eff or 1
+	pf = pf or 1
+	current = p / (math.sqrt(3) * v * eff * pf)
+
+	return current
