@@ -45,11 +45,13 @@ class MotorRepository(IRepository):
 					motor.manufacturer_id)
 				motor.manufacturer = manufacturer.name
 
-			if voltage_ranges:
-				voltage_range = voltage_ranges[0]
+			if motor.voltage_id:
+				voltage = self._voltage_range_repository.get(motor.voltage_id)
+				motor.voltage = voltage.description
 
-		motors = self.db.get_list(self.table_name, _filters, as_dict=True)
-		return DBMotorMapper.create_aggregates(motors, voltage_range)
+			motors.append(motor)
+
+		return motors
 
 	def get(self, motor_id) -> MotorAggregate:
 		motors = self.db.get_list(
