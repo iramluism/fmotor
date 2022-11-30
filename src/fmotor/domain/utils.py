@@ -1,10 +1,12 @@
 """ Fmotor Domain Utils Module """
 
-from typing import Iterable
+import math
+
+from typing import Iterable, Optional
 
 
 def linear_interpolation(
-		p1: Iterable[int, int], p2: Iterable[int, int], x: int) -> int:
+		p1: Iterable[float], p2: Iterable[float], x: float) -> float:
 	"""
 	Calculate Linear interpolation between two points
 	:param p1: first point (x1, y1)
