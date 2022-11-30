@@ -1,14 +1,12 @@
 """ Fmotor Domain Services Module """
 
-import math
-
 from typing import List
 from dependency_injector.wiring import Provide
 
 from src.seedwork.domain.services import IService
 from .entities import MotorEntity, MotorMeasurement
 from .mappers import EstimateMotorMapper
-from .utils import linear_interpolation
+from .utils import linear_interpolation, calculate_three_phase_current
 from .aggregates import MotorAggregate
 
 
@@ -16,11 +14,10 @@ class GetNearestMotorService(IService):
 	""" GetNearestMotorService class """
 
 	_motor_validator = Provide["motor_validator"]
-	_get_low_voltage_service = Provide["get_low_voltage_service"]
 	_get_motor_error_service = Provide["get_motor_error_service"]
 
-	def execute(self, motor_ref: MotorEntity, motors: list[MotorEntity]
-	            ) -> List[MotorEntity]:
+	def execute(self, motor_ref: MotorAggregate, motors: list[MotorAggregate]
+	            ) -> List[MotorAggregate]:
 		""" Get Nearest Motor to a reference motor
 		:param motor_ref: Reference motor
 		:param motors: Motors to evaluate
@@ -62,23 +59,33 @@ class EstimateMotorService(IService):
 
 		motor = EstimateMotorMapper.create_motor(motor_eval, motor_ref)
 
-		watts_nom = motor.kw * 1000
+		p_nom = None
+		if motor.kw:
+			p_nom = motor.kw * 1000
+		elif motor.hp_nom:
+			p_nom = motor.hp_nom / 1.341 * 1000
 
-		motor.i_fl = 100 * watts_nom / (
-				math.sqrt(3) * motor.v_nom * motor.eff_fl * motor.pf_fl)
+		if motor.v_nom and p_nom:
+			if motor.eff_fl and motor.pf_fl:
+				motor.i_fl = calculate_three_phase_current(
+					p_nom, motor.v_nom, motor.eff_fl / 100, motor.pf_fl / 100
+				)
+			if motor.eff_75 and motor.pf_75:
+				motor.i_75 = 0.75 * calculate_three_phase_current(
+					p_nom, motor.v_nom, motor.eff_75 / 100, motor.pf_75 / 100
+				)
+			if motor.eff_50 and motor.pf_50:
+				motor.i_50 = 0.5 * calculate_three_phase_current(
+					p_nom, motor.v_nom, motor.eff_50 / 100, motor.pf_50 / 100
+				)
+			if motor.eff_25 and motor.pf_25:
+				motor.i_25 = 0.25 * calculate_three_phase_current(
+					p_nom, motor.v_nom, motor.eff_25 / 100, motor.pf_25 / 100
+				)
 
-		motor.i_75 = 75 * watts_nom / (
-				math.sqrt(3) * motor.v_nom * motor.eff_75 * motor.pf_75)
-
-		motor.i_50 = 50 * watts_nom / (
-				math.sqrt(3) * motor.v_nom * motor.eff_50 * motor.pf_50)
-
-		motor.i_25 = 25 * watts_nom / (
-				math.sqrt(3) * motor.v_nom * motor.eff_25 * motor.pf_25)
-
-		ki0 = motor.i_idle / motor.i_fl
-
-		motor.i_0 = motor.i_fl * ki0
+		if motor.i_idle and motor.i_fl:
+			ki0 = motor.i_idle / motor.i_fl
+			motor.i_0 = motor.i_fl * ki0
 
 		return motor
 
@@ -115,6 +122,12 @@ class InterpolateMotorService(IService):
 
 		measurement_x = MotorMeasurement(motor=motor, current=i_x)
 
+		p_nom = None
+		if motor.kw:
+			p_nom = motor.kw
+		elif motor.hp_nom:
+			p_nom = motor.hp_nom / 1.341
+
 		kc_up, i_up, eff_up, pf_up = i_ranges[idx_up]
 		kc_down, i_down, eff_down, pf_down = i_ranges[idx_up - 1]
 		if kc_up and kc_down:
@@ -129,8 +142,8 @@ class InterpolateMotorService(IService):
 			measurement_x.pf = linear_interpolation(
 				(i_down, pf_down), (i_up, pf_up), i_x)
 
-		if measurement_x.kc:
-			measurement_x.p_out = measurement_x.kc * motor.hp_nom / 1.341
+		if measurement_x.kc and p_nom:
+			measurement_x.p_out = measurement_x.kc * p_nom
 
 		if measurement_x.p_out and measurement_x.eff:
 			measurement_x.p_in = measurement_x.p_out / measurement_x.eff
