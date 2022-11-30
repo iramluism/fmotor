@@ -88,12 +88,14 @@ class VoltageRangeRepository(IRepository):
 
 	def get(self, voltage_id) -> VoltageRangeEntity:
 		""" Get voltage Range entity by the voltage id """
-		voltages = self.filter(voltage_id=voltage_id)
-		if voltages:
-			return voltages[0]
 
-	def filter(self, **filters) -> List[VoltageRangeEntity]:
-		""" Filter voltages ranges """
-		filters = DBVoltageRangeMapper.map_filters(filters)
-		voltages = self.db.get_list(self.voltage_table_name, filters, as_dict=True)
-		return DBVoltageRangeMapper.create_entities(voltages)
+		voltages = self.db.get_list(
+			self.voltage_table_name, {"id": voltage_id}, as_dict=True,
+			length=1)
+
+		voltage = None
+		if voltages:
+			voltage = DBVoltageRangeMapper.create_entity(voltages[0])
+
+		return voltage
+
