@@ -17,6 +17,9 @@ class IMapper:
 		if not missing_values:
 			missing_values = {}
 
+		if not mapping:
+			mapping = {}
+
 		if not excluded_fields:
 			excluded_fields = []
 
@@ -26,7 +29,13 @@ class IMapper:
 		to_fields = []
 
 		from_fields = cls.get_fields(_from)
+
 		for field in from_fields:
+
+			for to_field, from_field in mapping.items():
+				if field == from_field:
+					field = to_field
+
 			if field in excluded_fields:
 				continue
 
@@ -73,9 +82,9 @@ class IMapper:
 			if default_values and field in default_values:
 				value = default_values[field]
 			elif mapping and field in mapping:
-				value = _from.get(mapping[field])
+				value = cls._get_value_from_obj(_from, mapping[field])
 			else:
-				value = _from.get(field)
+				value = cls._get_value_from_obj(_from, field)
 
 			if not value and missing_values and field in missing_values:
 				value = missing_values[field]
@@ -92,6 +101,15 @@ class IMapper:
 			to_obj.__dict__.update(properties)
 
 		return to_obj
+
+	@staticmethod
+	def _get_value_from_obj(obj, field, default_value=None):
+		if hasattr(obj, "get"):
+			value = obj.get(field) or default_value
+		else:
+			value = getattr(obj, field, default_value)
+
+		return value
 
 	@staticmethod
 	def get_fields(obj: Any) -> list:
