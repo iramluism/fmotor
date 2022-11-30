@@ -26,10 +26,13 @@ class IValidator(metaclass=abc.ABCMeta):
 			}
 		)
 
+	def clear_context(self):
+		self._error_context.clear()
+
 	def is_valid(self) -> bool:
 		return not self._error_context
 
 	def raise_errors(self) -> NoReturn:
 		errors = copy.deepcopy(self._error_context)
-		self._error_context.clear()
+		self.clear_context()
 		raise TypeError(errors)
