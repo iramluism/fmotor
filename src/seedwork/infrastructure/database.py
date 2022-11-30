@@ -52,7 +52,6 @@ class SQLiteManager(DatabaseManager):
 
 		result = result[:length]
 
-		self.close()
 		return result
 
 	@staticmethod
