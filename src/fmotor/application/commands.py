@@ -43,8 +43,6 @@ class EstimateMotorCommand(ICommand):
 		motor_eval = MotorMapper.create_aggregate(estimate_motor_dti.motor_eval)
 		motor_ref = MotorMapper.create_aggregate(estimate_motor_dti.motor_ref)
 
-		motor_ref = self._motor_repository.get(motor_ref.motor_id)
-
 		estimated_motor = self._estimate_motor_service.execute(motor_eval, motor_ref)
 
 		estimated_motor_dto = MotorMapper.create_dto(estimated_motor)
