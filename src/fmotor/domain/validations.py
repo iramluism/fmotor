@@ -1,16 +1,17 @@
 """ Fmotor Domain Validation Module """
 
 from src.seedwork.domain.validations import IValidator
-from .entities import MotorEntity, MotorMeasurement
+from .entities import MotorMeasurement
+from .aggregates import MotorAggregate
 
 
 class MotorValidator(IValidator):
 	""" MotorValidator class """
 
-	def execute(self, motor: MotorEntity, raise_error=True):
+	def execute(self, motor: MotorAggregate, raise_error=True):
 		""" Validate motor entity fields """
 
-		if not motor.hp_nom:
+		if not motor.hp_nom and not motor.kw:
 			self.add_error("no declared Power")
 
 		if raise_error and not self.is_valid():
