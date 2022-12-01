@@ -298,7 +298,7 @@ class MotorComponent(IComponent):
 		motor = prepare_motor_values(motor or {})
 
 		motor_label_text = [
-			("model", "[b]Modelo:[/b] %s ", _("Model"), motor.get("model")),
+			("model", "[b]%s:[/b] %s ", _("Model"), motor.get("model")),
 			("manufacturer", "[b]%s:[/b] %s", _("Manufacturer"), motor.get("manufacturer")),
 			("design", "[b]%s:[/b] %s" , _("Design"), motor.get("design")),
 			("catalog", "[b]%s:[/b] %s", _("Catalog"), motor.get("catalog")),
@@ -308,9 +308,9 @@ class MotorComponent(IComponent):
 			("rpm", "[b]%s:[/b] %s", _("rpm"), motor.get("rpm"))
 		]
 
-		for label_id, label_template, *context in motor_label_text:
+		for label_id, label_template, label_name, value, in motor_label_text:
 			label = self.widget.content_cls.ids.get(label_id)
-			label.text = label_template % context
+			label.text = label_template % (label_name, value)
 
 		datatable = self.widget.content_cls.ids.get("datatable")
 		datatable.update_motor(motor)
