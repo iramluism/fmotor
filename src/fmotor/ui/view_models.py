@@ -20,7 +20,8 @@ from .events import (
 	EstimateMotorEvent,
 	FilterMotorEvent,
 	CalculateMotorEvent,
-	ErrorEvent
+	ErrorEvent,
+	NoMotorEvent
 )
 
 
@@ -34,35 +35,37 @@ class FilterMotorViewModel(IViewModel):
 
 		FilterMotorEvent.dispatch()
 
+		motor = MotorDTO(
+			type=convert(motor.get("motor_type"), str),
+			v_nom=convert(motor.get("voltage"), float),
+			kw=convert(motor.get("kw"), float),
+			rpm=convert(motor.get("rpm"), float),
+			eff_fl=convert(motor.get("eff"), float),
+			pf_fl=convert(motor.get("pf"), float)
+		)
+
 		time.sleep(0.2)
 
-		filter_motor_dto = self._filter_motor_query.execute(motor)
+		try:
 
-		self._motor_cache.set("cur_motor", motor.as_dict())
+			filter_motor_dto = self._filter_motor_query.execute(motor)
 
-		motors = filter_motor_dto.as_dict().get("motors")
+		except Exception as e:
+			raise e
+		else:
+			self._motor_cache.set("cur_motor", motor.as_dict())
 
-		MotorListEvent.dispatch(motors)
+			motors = filter_motor_dto.as_dict().get("motors")
+			MotorListEvent.dispatch(motors)
 
 	def execute(self, motor: dict):
 		""" Get motors from model """
 
-		try:
-			motor = MotorDTO(
-				type=convert(motor.get("motor_type"), str),
-				v_nom=convert(motor.get("voltage"), float),
-				kw=convert(motor.get("kw"), float),
-				rpm=convert(motor.get("rpm"), float),
-				eff_fl=convert(motor.get("eff"), float),
-				pf_fl=convert(motor.get("pf"), float)
-			)
-
-			thread = threading.Thread(
-				target=self.filter_motors, args=[motor])
+		if not motor:
+			NoMotorEvent.dispatch()
+		else:
+			thread = threading.Thread(target=self.filter_motors, args=[motor])
 			thread.start()
-
-		except Exception as e:
-			raise e
 
 
 class EstimateMotorViewModel(IViewModel):
