@@ -1,7 +1,7 @@
 """ Fmotor Domain Aggregates Module """
 
 import dataclasses
-from src.seedwork.domain.aggregates import IAggregate
+from seedwork.domain.aggregates import IAggregate
 
 
 @dataclasses.dataclass()

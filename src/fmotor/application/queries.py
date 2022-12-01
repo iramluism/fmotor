@@ -2,8 +2,8 @@
 
 from dependency_injector.wiring import Provide
 
-from src.seedwork.application.queries import IQuery
-from src.fmotor.application.mappers import MotorMapper
+from seedwork.application.queries import IQuery
+from fmotor.application.mappers import MotorMapper
 from .dtos import FilterMotorQueryDTO, MotorDTO
 
 

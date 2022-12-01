@@ -3,7 +3,7 @@
 from typing import List
 from dependency_injector.wiring import Provide
 
-from src.seedwork.domain.services import IService
+from seedwork.domain.services import IService
 from .entities import MotorEntity, MotorMeasurement
 from .mappers import EstimateMotorMapper
 from .utils import linear_interpolation, calculate_three_phase_current

@@ -1,10 +1,10 @@
 """ Fmotor Application Mappers Module """
 
-from src.seedwork.domain.mappers import IMapper
+from seedwork.domain.mappers import IMapper
 
 from .dtos import MotorDTO, CalculateMotorDTO
-from src.fmotor.domain.entities import MotorEntity, MotorMeasurement
-from src.fmotor.domain.aggregates import MotorAggregate
+from fmotor.domain.entities import MotorEntity, MotorMeasurement
+from fmotor.domain.aggregates import MotorAggregate
 from .utils import encrypt_motor_id, decrypt_motor_id
 
 

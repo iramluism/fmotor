@@ -23,9 +23,9 @@ from kivymd.uix.button import (
 
 from kivymd.uix.spinner import MDSpinner
 
-from src.fmotor.ui.utils import prepare_motor_values
-from src.seedwork.ui.utils import _
-from src.seedwork.ui.components import IComponent
+from fmotor.ui.utils import prepare_motor_values
+from seedwork.ui.utils import _
+from seedwork.ui.components import IComponent
 
 
 class FMotorAppComponent(IComponent):

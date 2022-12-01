@@ -1,6 +1,6 @@
 """ Fmotor Domain Mappers Module """
 
-from src.seedwork.domain.mappers import IMapper
+from seedwork.domain.mappers import IMapper
 from .aggregates import MotorAggregate
 
 

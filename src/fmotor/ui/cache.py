@@ -1,6 +1,6 @@
 """ Fmotor UI Cache Module """
 
-from src.seedwork.ui.cache import ICache
+from seedwork.ui.cache import ICache
 
 
 class MotorCache(ICache):

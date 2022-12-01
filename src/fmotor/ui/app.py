@@ -1,6 +1,6 @@
 """ FMotor UI App Module """
 
-from src.seedwork.ui.app import IApp
+from seedwork.ui.app import IApp
 
 from .components import FMotorAppComponent
 

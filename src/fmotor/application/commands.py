@@ -2,11 +2,11 @@
 
 from dependency_injector.wiring import Provide
 
-from src.seedwork.application.commands import ICommand
+from seedwork.application.commands import ICommand
 
-from src.fmotor.application.mappers import MotorMapper, MotorMeasurementMapper
+from fmotor.application.mappers import MotorMapper, MotorMeasurementMapper
 
-from src.fmotor.application.dtos import (
+from fmotor.application.dtos import (
 	EstimateMotorDTI,
 	MotorDTO,
 	CalculateMotorDTO

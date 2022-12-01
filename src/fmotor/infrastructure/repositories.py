@@ -3,9 +3,9 @@
 from typing import List
 from dependency_injector.wiring import Provide
 
-from src.seedwork.infrastructure.repositories import IRepository
-from src.fmotor.domain.entities import VoltageRangeEntity, ManufacturerEntity
-from src.fmotor.domain.aggregates import MotorAggregate
+from seedwork.infrastructure.repositories import IRepository
+from fmotor.domain.entities import VoltageRangeEntity, ManufacturerEntity
+from fmotor.domain.aggregates import MotorAggregate
 
 from .mappers import DBMotorMapper, DBVoltageRangeMapper, DBManufacturerMapper
 from .utils import get_voltage_ranges

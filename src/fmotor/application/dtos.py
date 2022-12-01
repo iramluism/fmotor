@@ -2,7 +2,7 @@
 
 import dataclasses
 
-from src.seedwork.infrastructure.dtos import IDTO
+from seedwork.infrastructure.dtos import IDTO
 
 
 @dataclasses.dataclass()

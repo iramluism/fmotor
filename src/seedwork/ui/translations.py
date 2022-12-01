@@ -1,7 +1,7 @@
 """ Translations Module """
 
 import enum
-from src.config import settings
+from config import settings
 from typing import Optional
 
 

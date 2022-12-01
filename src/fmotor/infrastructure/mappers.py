@@ -2,9 +2,9 @@
 
 from typing import List, Optional
 
-from src.seedwork.domain.mappers import IMapper
-from src.fmotor.domain.entities import VoltageRangeEntity, ManufacturerEntity
-from src.fmotor.domain.aggregates import MotorAggregate
+from seedwork.domain.mappers import IMapper
+from fmotor.domain.entities import VoltageRangeEntity, ManufacturerEntity
+from fmotor.domain.aggregates import MotorAggregate
 from .utils import get_voltage_from_id
 
 

@@ -4,12 +4,11 @@
 import time
 import threading
 
-
 from dependency_injector.wiring import Provide
-from src.seedwork.ui.view_models import IViewModel
-from src.fmotor.ui.utils import convert, parse_error_messages
+from seedwork.ui.view_models import IViewModel
+from fmotor.ui.utils import convert, parse_error_messages
 
-from src.fmotor.application.dtos import (
+from fmotor.application.dtos import (
 	MotorDTO,
 	EstimateMotorDTI,
 	CalculateMotorDTO

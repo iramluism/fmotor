@@ -2,7 +2,7 @@
 
 import dataclasses
 
-from src.seedwork.domain.entities import IEntity
+from seedwork.domain.entities import IEntity
 
 
 @dataclasses.dataclass()

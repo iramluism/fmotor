@@ -8,7 +8,7 @@ from kivy.lang.builder import Builder
 from kivy.factory import Factory
 from kivy.uix.widget import Widget
 
-from src.seedwork.ui.components import IComponent
+from seedwork.ui.components import IComponent
 
 
 class IBuilder(metaclass=abc.ABCMeta):

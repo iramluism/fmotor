@@ -1,6 +1,6 @@
 """ Fmotor Domain Validation Module """
 
-from src.seedwork.domain.validations import IValidator
+from seedwork.domain.validations import IValidator
 from .entities import MotorMeasurement
 from .aggregates import MotorAggregate
 

@@ -1,8 +1,8 @@
 
 
-from src.fmotor.ui.app import FMotorApp
-from src.config.dependencies import Container
-from src.config import settings
+from fmotor.ui.app import FMotorApp
+from config.dependencies import Container
+from config import settings
 
 
 def main():

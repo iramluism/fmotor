@@ -1,3 +1,4 @@
 Kivy~=2.1.0
 kivymd~=1.0.2
 dependency_injector~=4.40.0
+pypika~=0.0.5
