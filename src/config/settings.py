@@ -12,3 +12,12 @@ DATABASE = {
 	}
 }
 
+
+TRANSLATIONS = {
+	"es": {
+		"path": "fmotor/ui/translations/es.csv"
+	}
+}
+
+LANGUAGE = "es"
+

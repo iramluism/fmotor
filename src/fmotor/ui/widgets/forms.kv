@@ -1,3 +1,4 @@
+#: import _ src.seedwork.ui.utils._
 
 MDBoxLayout:
     orientation: "vertical"
@@ -7,24 +8,24 @@ MDBoxLayout:
 
 #    MDTextField:
 #        id: motor_type
-#        hint_text: "Type"
+#        hint_text: _("Type")
 
     MDTextField:
         id: voltage
-        hint_text: "Voltage (V)"
+        hint_text: _("Voltage (V)")
 
 	MDTextField:
 	    id: kw
-		hint_text: "Power (kw)"
+		hint_text: _("Power (%)")
 
 	MDTextField:
 	    id: rpm
-		hint_text: "RPM"
+		hint_text: _("Synchronous speed (rpm)")
 
 	MDTextField:
 	    id: eff
-		hint_text: "Efficiency (%)"
+		hint_text: _("Efficiency (%)")
 
 	MDTextField:
 	    id: pf
-		hint_text: "Power Factor (%)"
+		hint_text: _("Power Factor (%)")
