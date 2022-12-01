@@ -1,7 +1,7 @@
 """ Cache Interfaces Module """
 
 from kivy.cache import Cache
-from typing import Any, ClassVar
+from typing import Any, ClassVar, Optional
 
 
 class ICache:
@@ -21,12 +21,20 @@ class ICache:
 	def set(self, key: str, value: Any):
 		self._cache.append(self.cache_name, key, value)
 
-	def get(self, key: str):
-		return self._cache.get(self.cache_name, key)
+	def get(self, key: str, default_value: Optional[Any] = None):
+		return self._cache.get(self.cache_name, key) or default_value
 
 	def remove(self, key: str):
 		self._cache.remove(self.cache_name, key)
 
 
 class ComponentCache(ICache):
+	pass
+
+
+class EventCache(ICache):
+	pass
+
+
+class TranslatorCache(ICache):
 	pass
