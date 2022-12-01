@@ -52,9 +52,10 @@ class ManufacturerEntity(IEntity):
 class MotorMeasurement(IEntity):
 	motor: MotorEntity
 	current: float
+	v: float = None
 	kc: float = None
 	pf: float = None
 	eff: float = None
 	p_out: float = None
 	p_in: float = None
-	lost: float = None
+	losses: float = None

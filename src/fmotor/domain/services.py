@@ -121,10 +121,10 @@ class InterpolateMotorService(IService):
 		i_x = measurement.current
 
 		idx_up = None
-		for idx, current in enumerate(i_ranges):
+		for idx, current in enumerate(i_ranges[:-1]):
 			i = current[1]
-			if i and i_x <= i:
-				idx_up = idx
+			if i and i_x >= i:
+				idx_up = idx + 1
 
 		measurement_x = MotorMeasurement(motor=motor, current=i_x)
 
@@ -142,11 +142,11 @@ class InterpolateMotorService(IService):
 
 		if eff_up and eff_down:
 			measurement_x.eff = linear_interpolation(
-				(i_down, eff_down), (i_up, eff_up), i_x)
+				(i_down, eff_down / 100), (i_up, eff_up / 100), i_x)
 
 		if pf_up and pf_down:
 			measurement_x.pf = linear_interpolation(
-				(i_down, pf_down), (i_up, pf_up), i_x)
+				(i_down, pf_down / 100), (i_up, pf_up / 100), i_x)
 
 		if measurement_x.kc and p_nom:
 			measurement_x.p_out = measurement_x.kc * p_nom
@@ -155,6 +155,6 @@ class InterpolateMotorService(IService):
 			measurement_x.p_in = measurement_x.p_out / measurement_x.eff
 
 		if measurement_x.p_in and measurement_x.p_out:
-			measurement_x.lost = measurement_x.p_in - measurement_x.p_out
+			measurement_x.losses = measurement_x.p_in - measurement_x.p_out
 
 		return measurement_x

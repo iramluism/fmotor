@@ -59,5 +59,5 @@ class CalculateMotorDTO(IDTO):
 	eff: float = None
 	p_out: float = None
 	p_in: float = None
-	lost: float = None
+	losses: float = None
 
