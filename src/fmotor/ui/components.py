@@ -427,7 +427,7 @@ class EstimateMotorComponent(IComponent):
 		content = self.widget.content_cls
 		motor = prepare_motor_values(motor)
 		motor_label_text = {
-			"voltage": "[b]%s:[/b] %s V" % (_("Voltage"), motor.get("voltage")),
+			"voltage": "[b]%s:[/b] %s V" % (_("Voltage"), motor.get("v_nom")),
 			"kw": "[b]%s:[/b] %s kw" % (_("Power"), motor.get("kw")),
 			"rpm": "[b]rpm:[/b] %s rpm" % motor.get("rpm")
 		}
