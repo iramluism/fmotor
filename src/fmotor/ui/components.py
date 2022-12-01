@@ -207,31 +207,12 @@ class MotorFormComponent(IComponent):
 
 	id = "motor_form"
 	_filter_motor_view_model = Provide["filter_motor_view_model"]
+	_motor_cache = Provide["motor_cache"]
+	dialog = None
 
-	def _on_press_cancel_button(self, *args) -> NoReturn:
-		""" Dismiss Form Dialog """
-		self.dismiss()
-
-	def _get_motor_inputs(self) -> dict:
-		""" Get input values in the form """
-
-		motor_inputs = {}
-		for field in ("voltage", "kw", "rpm", "eff", "pf"):
-			widget = self.content_cls.ids.get(field)
-			motor_inputs[field] = widget.text
-
-		return motor_inputs
-
-	def _on_press_filter_button(self, *args) -> NoReturn:
-		""" handle filter motor actions  """
-
-		self.dismiss()
-		self._filter_motor_view_model.execute(self._get_motor_inputs())
-
-	def render(self) -> MDDialog:
-		""" Render Motor Form Dialog """
-
-		content = self.builder.load_file("fmotor/ui/widgets/forms.kv")
+	@classmethod
+	def _init_dialog(cls):
+		content = cls.builder.load_file("fmotor/ui/widgets/forms.kv")
 
 		cancel_button = MDFlatButton(
 			text=_("CANCEL"), theme_text_color="Custom",
@@ -249,6 +230,36 @@ class MotorFormComponent(IComponent):
 			buttons=[cancel_button, filter_button]
 		)
 
+		return dialog
+
+	@classmethod
+	def render_dialog(cls):
+		if not cls.dialog:
+			cls.dialog = cls._init_dialog()
+		return cls.dialog
+
+	@classmethod
+	def _on_press_cancel_button(cls) -> NoReturn:
+		""" Dismiss Form Dialog """
+		cls.dialog.dismiss()
+
+	@classmethod
+	def _on_press_filter_button(cls) -> NoReturn:
+		""" handle filter motor actions  """
+
+		cls.dialog.dismiss()
+
+		motor_inputs = {}
+		for field in ("voltage", "kw", "rpm", "eff", "pf"):
+			widget = cls.dialog.content_cls.ids.get(field)
+			if widget.text:
+				motor_inputs[field] = widget.text
+
+		cls._filter_motor_view_model.execute(motor_inputs)
+
+	def render(self) -> MDDialog:
+		""" Render Motor Form Dialog """
+		dialog = self.render_dialog()
 		return dialog
 
 
