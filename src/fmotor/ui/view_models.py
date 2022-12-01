@@ -40,8 +40,8 @@ class FilterMotorViewModel(IViewModel):
 			v_nom=convert(motor.get("voltage"), float),
 			kw=convert(motor.get("kw"), float),
 			rpm=convert(motor.get("rpm"), float),
-			eff_fl=convert(motor.get("eff"), float),
-			pf_fl=convert(motor.get("pf"), float)
+			eff_fl=convert(motor.get("eff"), float, 100),
+			pf_fl=convert(motor.get("pf"), float, 100)
 		)
 
 		time.sleep(0.2)
