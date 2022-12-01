@@ -8,13 +8,13 @@ def convert(value, to, default=None):
 	:param default: default value if raise a value error on converting
 	"""
 
-	result = default
+	result = default or to()
 
 	if value:
 		try:
 			result = to(value)
 		except ValueError:
-			result = default or to()
+			pass
 
 	return result
 
