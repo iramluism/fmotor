@@ -12,6 +12,7 @@ class IContainer(containers.DeclarativeContainer):
 	wiring_config = containers.WiringConfiguration(
 		modules=[
 			"src.seedwork.ui.app",
+			"src.seedwork.ui.events",
 			"src.seedwork.ui.view_models",
 			"src.seedwork.ui.builder",
 			"src.seedwork.infrastructure.repositories"
@@ -22,6 +23,8 @@ class IContainer(containers.DeclarativeContainer):
 
 	db = providers.Singleton(database_config.get("engine"), database_config.get("path"))
 	component_cache = providers.Singleton("src.seedwork.ui.cache.ComponentCache")
+	event_cache = providers.Singleton(
+		"src.seedwork.ui.cache.EventCache")
 	builder = providers.Singleton("src.seedwork.ui.builder.IBuilder")
 	ui_theme = providers.Singleton("src.seedwork.ui.themes.IDarkTheme")
 	current_app = providers.Callable(get_running_app)
