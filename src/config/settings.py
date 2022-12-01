@@ -8,14 +8,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DATABASE = {
 	"default": {
 		"engine": "src.seedwork.infrastructure.database.SQLiteManager",
-		"path": "database/db.sqlite3"
+		"path": BASE_DIR / "database/db.sqlite3"
 	}
 }
 
 
 TRANSLATIONS = {
 	"es": {
-		"path": "fmotor/ui/translations/es.csv"
+		"path": BASE_DIR / "fmotor/ui/translations/es.csv"
 	}
 }
 
