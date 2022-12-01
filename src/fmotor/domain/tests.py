@@ -23,18 +23,18 @@ class GetNearestMotorTestCase(unittest.TestCase):
 		self.service = GetNearestMotorService()
 
 		self.motors = [
-			MotorAggregate(v_nom=110, kw=1.5, rpm=1800, pf_fl=1, pf_75=.85,
-			               pf_50=0.86, pf_25=0.2, eff_75=0.71, eff_fl=.55),
-			MotorAggregate(v_nom=110, kw=1.8, rpm=1600, pf_fl=.9, pf_75=.75,
-			               pf_50=0.89, pf_25=0.85, eff_75=0.78, eff_fl=.28),
-			MotorAggregate(v_nom=220, kw=1.8, rpm=1800, pf_fl=.58, pf_75=.75,
-			               pf_50=0.59, pf_25=0.95, eff_75=0.95, eff_fl=.55),
+			MotorAggregate(v_nom=110, kw=1.5, rpm=1800, pf_fl=1, pf_75=85,
+			               pf_50=86, pf_25=2, eff_75=71, eff_fl=55),
+			MotorAggregate(v_nom=110, kw=1.8, rpm=1600, pf_fl=9, pf_75=75,
+			               pf_50=89, pf_25=0.85, eff_75=78, eff_fl=28),
+			MotorAggregate(v_nom=220, kw=1.8, rpm=1800, pf_fl=58, pf_75=75,
+			               pf_50=59, pf_25=95, eff_75=95, eff_fl=55),
 		]
 
 		self.motor = MotorAggregate(v_nom=220, kw=1.5, rpm=1800, pf_fl=.58,
-		                            pf_75=.75, pf_50=0.59, pf_25=0.95,
-		                            eff_75=0.95,
-		                            eff_fl=.55)
+		                            pf_75=75, pf_50=59, pf_25=95,
+		                            eff_75=95,
+		                            eff_fl=55)
 
 		self._service = GetNearestMotorService()
 
@@ -160,7 +160,7 @@ class InterpolateMotorValueTestCase(unittest.TestCase):
 	def test_interpolate_efficiency(self):
 		motor = MotorEntity(
 			eff_fl=68,
-			eff_75=67.4,
+			eff_75=65.4,
 			eff_50=63.4,
 			eff_25=51,
 			i_fl=80,
@@ -171,12 +171,12 @@ class InterpolateMotorValueTestCase(unittest.TestCase):
 
 		result = self.service.execute(measurement)
 		self.assertLessEqual(result.eff, 68)
-		self.assertGreaterEqual(result.eff, 67)
+		self.assertGreaterEqual(result.eff, 65.4)
 		self.assertEqual(result.current, 70)
 
 		measurement = MotorMeasurement(motor=motor, current=50)
 		result = self.service.execute(measurement)
-		self.assertAlmostEqual(result.eff, 67.4, 0)
+		self.assertAlmostEqual(result.eff, 65.4, 0)
 
 	def test_interpolate_efficiency_with_missing_currents(self):
 		motor = MotorEntity(
@@ -185,7 +185,8 @@ class InterpolateMotorValueTestCase(unittest.TestCase):
 			eff_50=63.4,
 			eff_25=51,
 			i_fl=80,
-			i_75=50
+			i_75=50,
+			i_50=20
 		)
 
 		measurement = MotorMeasurement(motor=motor, current=40)

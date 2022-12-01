@@ -157,4 +157,9 @@ class InterpolateMotorService(IService):
 		if measurement_x.p_in and measurement_x.p_out:
 			measurement_x.losses = measurement_x.p_in - measurement_x.p_out
 
+		if measurement_x.eff:
+			measurement_x.eff *= 100
+		if measurement_x.pf:
+			measurement_x.pf *= 100
+
 		return measurement_x
