@@ -170,8 +170,15 @@ class ListMotorComponent(IComponent):
 			MDSpinner(
 				size_hint=(None, None),
 				size=(dp(46), dp(46)),
-				pos_hint={'center_x': .5, 'center_y': .5},
-			)
+				pos_hint={'center_x': .5, 'center_y': .5}
+			),
+			MDLabel(
+				text=_("Finding nearest motors ..."),
+				halign="center",
+				theme_text_color="Hint",
+				font_style="Caption",
+				pos_hint={'center_x': .5, 'center_y': .4}
+			),
 		)
 		layout = self.widget
 		layout.clear_widgets()
@@ -185,15 +192,27 @@ class ListMotorComponent(IComponent):
 		layout = self.widget
 		layout.clear_widgets()
 
+		screen = MDScreen()
 		if motors:
 			content = MDList()
 			for motor in motors:
 				content.add_widget(MotorItemComponent.build(motor))
-		else:
-			content = MDLabel(
-				text=_("No Motors"), halign="center", theme_text_color="Hint")
 
-		layout.add_widget(content)
+			screen.add_widget(content)
+		else:
+
+			screen.add_widget(
+				MDLabel(text=_("No Motors"), halign="center",
+				        theme_text_color="Hint", font_style="Body1")
+			)
+
+			screen.add_widget(
+				MDLabel(text=_("Tap the Search button to find motors"),
+				        halign="center", theme_text_color="Hint",
+				        pos_hint={"center_y": 0.45}, font_style="Caption")
+			)
+
+		layout.add_widget(screen)
 
 	def render(self) -> MDLabel | MDScrollView:
 		""" Render motor results """
