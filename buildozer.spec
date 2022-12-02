@@ -37,7 +37,7 @@ version = 1.1.2
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = python3,kivy,kivymd,dependency-injector, pypika,sqlite3
+requirements = python3,kivy,kivymd,inject, pypika,sqlite3
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
