@@ -13,7 +13,7 @@ package.domain = uclv
 source.dir = src
 
 # (list) Source files to include (let empty to include all the files)
-source.include_exts = py, kv, sqlite3
+source.include_exts = py, kv, sqlite3, csv
 
 # (list) List of inclusions using pattern matching
 #source.include_patterns = assets/*,images/*.png
