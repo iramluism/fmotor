@@ -12,4 +12,5 @@ class FMotorApp(IApp):
 		""" Build Fmotor Application """
 		return FMotorAppComponent.build()
 
-
+	def on_pause(self):
+		return True
