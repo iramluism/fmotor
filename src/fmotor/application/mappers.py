@@ -16,11 +16,6 @@ class MotorMapper(IMapper):
 		""" Create Motor entity from Motor DTO """
 
 		default_values = {}
-		if motor_dto.kw and not motor_dto.hp_nom:
-			default_values["hp_nom"] = motor_dto.kw * 1.34
-		elif motor_dto.hp_nom and not motor_dto.kw:
-			default_values["kw"] = motor_dto.hp_nom / 1.34
-
 		if motor_dto.id:
 			default_values["motor_id"] = decrypt_motor_id(motor_dto.id)
 

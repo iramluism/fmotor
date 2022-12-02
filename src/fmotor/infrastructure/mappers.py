@@ -1,5 +1,5 @@
 """ Fmotor Infrastructure Mappers Module """
-
+import re
 from typing import List, Optional
 
 from seedwork.domain.mappers import IMapper
@@ -20,11 +20,12 @@ class DBMotorMapper(IMapper):
 			_from=filters,
 			mapping={
 				"motor_id": "id",
-				"hp": "hp_nom",
-				"nemadesign": "design"
+				"hp": "p_nom",
+				"nemadesign": "design",
+				"rpm_fl": "rpm"
 			},
 			missing_values={
-				"hp": filters.get("kw", 0) * 1.341
+				"hp": filters.get("p_nom", 0) * 1341
 			},
 			excluded_fields=["v_nom"]
 		)
@@ -44,17 +45,28 @@ class DBMotorMapper(IMapper):
 				"hp_nom": "hp",
 				"i_idle": "amps_idle",
 				"i_fl": "amps_fl",
-				"design": "nemadesign"
+				"design": "nemadesign",
+				"rpm": "rpm_fl"
 			},
 			default_values={
-				"kw": float(motor.get("hp", 0)) * 1.34,
+				"p_nom": float(motor.get("hp", 0)) * 746.2686
+			},
+			missing_values={
+				"eff_0": 0,
+				"pf_0": 10,
 			}
 		)
 
 		for field in MotorAggregate.field_details():
 			value = motor_aggregate.get(field.name)
+
 			if value:
-				motor_aggregate.set(field.name, field.type(value))
+				value = field.type(value)
+
+				if re.search(r"(^eff\_)|(^pf\_)", field.name):
+					value /= 100
+
+				motor_aggregate.set(field.name, value)
 
 		return motor_aggregate
 

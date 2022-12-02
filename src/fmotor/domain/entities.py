@@ -23,14 +23,18 @@ class MotorEntity(IEntity):
 	i_75: float = None
 	i_50: float = None
 	i_25: float = None
+	i_0: float = None
+	p_nom: float = None
 	eff_fl: float = 1
 	eff_75: float = 1
 	eff_50: float = 1
 	eff_25: float = 1
+	eff_0: float = 0
 	pf_fl: float = 1
 	pf_75: float = 1
 	pf_50: float = 1
 	pf_25: float = 1
+	pf_0: float = 0.1
 	id: int = None
 
 
