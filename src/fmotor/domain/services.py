@@ -49,10 +49,16 @@ class GetNearestMotorService(IService):
 		self._motor_validator.execute(motor_ref)
 
 		likely_motors = []
+
 		for motor in motors:
+
+			if len(likely_motors) == 30:
+				break
+
 			error = self._get_motor_error_service.execute(motor, motor_ref)
 			if error < 0.1:
 				motor.error = error
+
 				likely_motors.append(motor)
 
 		sorted_motors = sorted(likely_motors, key=lambda m: m.error)
