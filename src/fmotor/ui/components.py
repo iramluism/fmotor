@@ -106,7 +106,7 @@ class SearchButtonComponent(IComponent):
 
 		return MDFloatingActionButton(
 			pos_hint={'x': .8, 'y': .05}, icon="magnify",
-			icon_color=(1, 1, 1, 1),
+			icon_color=(1, 1, 1, 1), elevation=2,
 			on_press=lambda e: MotorFormComponent.build().open()
 		)
 
@@ -122,7 +122,7 @@ class ToolBarComponent(IComponent):
 		self.actions = actions or {}
 		self.widget = MDTopAppBar(
 			title=self.title, opposite_colors=True,
-			md_bg_color=(1, 1, 0, 1), type_height="small", elevation=4
+			md_bg_color=(1, 1, 0, 1), type_height="small",elevation=0
 		)
 
 	def update_title(self, title: str) -> NoReturn:
@@ -150,7 +150,7 @@ class ToolBarComponent(IComponent):
 
 		toolbar = MDTopAppBar(
 			title=self.title, opposite_colors=True,
-			md_bg_color=(1, 1, 0, 1), type_height="small", elevation=4
+			md_bg_color=(1, 1, 0, 1), type_height="small", elevation=0
 		)
 
 		self.widget = toolbar
@@ -243,6 +243,7 @@ class MotorFormComponent(IComponent):
 			on_press=lambda e: cls._on_press_cancel_button())
 
 		filter_button = MDRaisedButton(
+			elevation=1,
 			text=_("FILTER"), theme_text_color="Custom", text_color="white",
 			on_press=lambda e: cls._on_press_filter_button())
 
