@@ -219,7 +219,7 @@ class ListMotorComponent(IComponent):
 
 		layout.add_widget(content)
 
-	def render(self) -> MDLabel | MDScrollView:
+	def render(self):
 		""" Render motor results """
 		self.widget = layout = MDScrollView()
 		self.refresh_data(self.motors)
