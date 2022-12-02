@@ -1,13 +1,15 @@
 """ Repositories Interfaces Module """
 
 import abc
-from dependency_injector.wiring import Provide
+import inject
+
+from .database import SQLiteManager
 
 
 class IRepository(metaclass=abc.ABCMeta):
 	""" IRepository class """
 
-	db = Provide["db"]
+	db = inject.attr(SQLiteManager)
 
 	def filter(self, *args, **kwargs):
 		pass

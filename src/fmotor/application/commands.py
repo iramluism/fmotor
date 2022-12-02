@@ -1,6 +1,6 @@
 """ Fmotor Application Commands Module """
 
-from dependency_injector.wiring import Provide
+import inject
 
 from seedwork.application.commands import ICommand
 
@@ -12,11 +12,15 @@ from fmotor.application.dtos import (
 	CalculateMotorDTO
 )
 
+from fmotor.domain.services import InterpolateMotorService
+from fmotor.domain.services import EstimateMotorService
+from fmotor.infrastructure.repositories import MotorRepository
+
 
 class CalculateMotorCommand(ICommand):
 	""" CalculateMotorCommand class """
 
-	_calculate_motor_service = Provide["interpolate_motor_service"]
+	_calculate_motor_service = inject.attr(InterpolateMotorService)
 
 	def execute(self, calculate_motor_dti: CalculateMotorDTO
 	            ) -> CalculateMotorDTO:
@@ -34,8 +38,8 @@ class CalculateMotorCommand(ICommand):
 class EstimateMotorCommand(ICommand):
 	""" EstimateMotorCommand class """
 
-	_estimate_motor_service = Provide["estimate_motor_service"]
-	_motor_repository = Provide["motor_repository"]
+	_estimate_motor_service = inject.attr(EstimateMotorService)
+	_motor_repository = inject.attr(MotorRepository)
 
 	def execute(self, estimate_motor_dti: EstimateMotorDTI) -> MotorDTO:
 		""" Compare two motors to estimate values """

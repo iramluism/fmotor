@@ -1,8 +1,8 @@
 
 
 from fmotor.ui.app import FMotorApp
-from config.dependencies import Container
 from config import settings
+import inject
 
 
 def main():
@@ -12,5 +12,5 @@ def main():
 
 
 if __name__ == "__main__":
-	container = Container()
+	inject.configure_once()
 	main()

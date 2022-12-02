@@ -1,14 +1,15 @@
 """ Fmotor UI Components Module """
 
-from typing import List, Optional, NoReturn
+import inject
 
-from dependency_injector.wiring import Provide
+from typing import List, Optional, NoReturn
 from kivymd.material_resources import dp
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.gridlayout import MDGridLayout
 from kivymd.uix.label import MDLabel
 from kivymd.uix.screen import MDScreen
+from kivymd.uix.spinner import MDSpinner
 from kivymd.uix.toolbar import MDTopAppBar
 from kivymd.uix.list import MDList, IconLeftWidget, OneLineAvatarListItem
 from kivymd.uix.list import TwoLineAvatarIconListItem
@@ -21,11 +22,16 @@ from kivymd.uix.button import (
 	MDIconButton, MDRaisedButton
 )
 
-from kivymd.uix.spinner import MDSpinner
-
-from fmotor.ui.utils import prepare_motor_values
 from seedwork.ui.utils import _
 from seedwork.ui.components import IComponent
+
+from fmotor.ui.utils import prepare_motor_values
+from fmotor.ui.cache import MotorCache
+from fmotor.ui.view_models import (
+	FilterMotorViewModel,
+	EstimateMotorViewModel,
+	CalculateMotorViewModel
+)
 
 
 class FMotorAppComponent(IComponent):
@@ -224,8 +230,8 @@ class MotorFormComponent(IComponent):
 	""" MotorFormComponent class """
 
 	id = "motor_form"
-	_filter_motor_view_model = Provide["filter_motor_view_model"]
-	_motor_cache = Provide["motor_cache"]
+	_filter_motor_view_model = inject.attr(FilterMotorViewModel)
+	_motor_cache = inject.attr(MotorCache)
 	dialog = None
 
 	@classmethod
@@ -285,7 +291,7 @@ class MotorComponent(IComponent):
 	""" MotorComponent class """
 
 	id = "motor"
-	_estimate_motor_view_model = Provide["estimate_motor_view_model"]
+	_estimate_motor_view_model = inject.attr(EstimateMotorViewModel)
 
 	def __init__(self, motor=None):
 		super().__init__()
@@ -459,7 +465,7 @@ class EstimateMotorComponent(IComponent):
 class CalculateFormComponent(IComponent):
 	id = "calculate_form"
 
-	_calculate_motor_view_model = Provide["calculate_motor_view_model"]
+	_calculate_motor_view_model = inject.attr(CalculateMotorViewModel)
 
 	def __init__(self, motor):
 		super().__init__()

@@ -1,17 +1,20 @@
 """ Fmotor Application Queries Module """
 
-from dependency_injector.wiring import Provide
+import inject
 
 from seedwork.application.queries import IQuery
 from fmotor.application.mappers import MotorMapper
+from fmotor.domain.services import GetNearestMotorService
+from fmotor.infrastructure.repositories import MotorRepository
+
 from .dtos import FilterMotorQueryDTO, MotorDTO
 
 
 class FilterMotorQuery(IQuery):
 	""" FilterMotorQuery class """
 
-	_motor_repository = Provide["motor_repository"]
-	_get_nearest_motor_service = Provide["get_nearest_motor_service"]
+	_motor_repository = inject.attr(MotorRepository)
+	_get_nearest_motor_service = inject.attr(GetNearestMotorService)
 
 	def execute(self, motor_ref: MotorDTO) -> FilterMotorQueryDTO:
 		""" Find the nearest motors

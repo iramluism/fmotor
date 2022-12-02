@@ -1,7 +1,8 @@
 """ Fmotor Domain Services Module """
 
 from typing import List
-from dependency_injector.wiring import Provide
+
+import inject
 
 from seedwork.domain.services import IService
 from .entities import MotorEntity, MotorMeasurement
@@ -9,12 +10,34 @@ from .mappers import EstimateMotorMapper
 from .utils import linear_interpolation, calculate_three_phase_current
 from .aggregates import MotorAggregate
 
+from .validations import MotorValidator, InterpolateMotorValidator
+
+
+class GetMotorErrorService(IService):
+	""" GetMotorErrorService class """
+
+	def execute(self, motor_eval: MotorAggregate, motor_ref: MotorAggregate
+	            ) -> float:
+		""" Calculate the error between two motors """
+
+		error = 0
+		for field in ("kw", "rpm", "eff_fl", "pf_fl"):
+			motor_ref_value = motor_ref.get(field)
+			motor_eval_value = motor_eval.get(field)
+
+			if motor_ref_value and motor_eval_value:
+				error += (motor_eval.get(field) / motor_ref.get(field) - 1) ** 2
+			else:
+				error += 1
+
+		return error
+
 
 class GetNearestMotorService(IService):
 	""" GetNearestMotorService class """
 
-	_motor_validator = Provide["motor_validator"]
-	_get_motor_error_service = Provide["get_motor_error_service"]
+	_motor_validator = inject.attr(MotorValidator)
+	_get_motor_error_service = inject.attr(GetMotorErrorService)
 
 	def execute(self, motor_ref: MotorAggregate, motors: list[MotorAggregate]
 	            ) -> List[MotorAggregate]:
@@ -35,25 +58,6 @@ class GetNearestMotorService(IService):
 		sorted_motors = sorted(likely_motors, key=lambda m: m.error)
 
 		return sorted_motors
-
-
-class GetMotorErrorService(IService):
-	""" GetMotorErrorService class """
-
-	def execute(self, motor_eval: MotorEntity, motor_ref: MotorEntity) -> float:
-		""" Calculate the error between two motors """
-
-		error = 0
-		for field in ("kw", "rpm", "eff_fl", "pf_fl"):
-			motor_ref_value = motor_ref.get(field)
-			motor_eval_value = motor_eval.get(field)
-
-			if motor_ref_value and motor_eval_value:
-				error += (motor_eval.get(field) / motor_ref.get(field) - 1) ** 2
-			else:
-				error += 1
-
-		return error
 
 
 class EstimateMotorService(IService):
@@ -99,7 +103,7 @@ class EstimateMotorService(IService):
 class InterpolateMotorService(IService):
 	""" InterpolateMotorService """
 
-	_interpolate_motor_validation = Provide["interpolate_motor_validator"]
+	_interpolate_motor_validation = inject.attr(InterpolateMotorValidator)
 
 	def execute(self, measurement: MotorMeasurement) -> MotorMeasurement:
 		""" Calculate power out, power factor, power in, lost and efficiency

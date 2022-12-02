@@ -2,19 +2,19 @@
 
 import abc
 import inspect
-from dependency_injector.wiring import Provide
+import inject
 
 from kivy.lang.builder import Builder
 from kivy.factory import Factory
 from kivy.uix.widget import Widget
 
-from seedwork.ui.components import IComponent
+from .cache import ComponentCache
 
 
 class IBuilder(metaclass=abc.ABCMeta):
 	""" IBuilder class """
 
-	_component_cache = Provide["component_cache"]
+	_component_cache = inject.attr(ComponentCache)
 	_builder = Builder
 
 	def load_file(self, *args, **kwargs):

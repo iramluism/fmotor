@@ -4,6 +4,7 @@ import sqlite3
 import abc
 
 from typing import Optional
+from config import settings
 
 from .utils import build_query
 
@@ -11,26 +12,25 @@ from .utils import build_query
 class DatabaseManager(metaclass=abc.ABCMeta):
 	""" DatabaseManager class """
 
-	@abc.abstractmethod
-	def execute(self, *args, **kwargs):
-		pass
+	db_config = settings.DATABASE or {}
+
+	def __init__(self, db_path=None):
+		config = self.get_config()
+
+		if not db_path:
+			db_path = config.get("path")
+
+		self.db_path = db_path
+
+	def get_config(self):
+		return self.db_config.get("default")
 
 
 class SQLiteManager(DatabaseManager):
 	""" SQLiteManager class """
 
-	def __init__(self, db_path):
-		self.db_path = db_path
-		self._conn = None
-		self._cur = None
-
-	def close(self):
-		""" close cursor connection """
-		if self._cur:
-			self._cur.close()
-
-	def connect(self):
-		self._conn = sqlite3.connect(self.db_path)
+	_conn = None
+	_cur = None
 
 	def get_list(self, table, filters: Optional[dict] = None,
 	             fields: Optional[dict] = None, as_dict: bool = False,
@@ -53,6 +53,14 @@ class SQLiteManager(DatabaseManager):
 		result = result[:length]
 
 		return result
+
+	def close(self):
+		""" close cursor connection """
+		if self._cur:
+			self._cur.close()
+
+	def connect(self):
+		self._conn = sqlite3.connect(self.db_path)
 
 	@staticmethod
 	def _convert_response_to_dict(response):

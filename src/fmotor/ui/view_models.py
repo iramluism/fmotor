@@ -3,10 +3,16 @@
 
 import time
 import threading
+import inject
 
-from dependency_injector.wiring import Provide
 from seedwork.ui.view_models import IViewModel
 from fmotor.ui.utils import convert, parse_error_messages
+
+from fmotor.application.queries import FilterMotorQuery
+from fmotor.application.commands import (
+	EstimateMotorCommand,
+	CalculateMotorCommand
+)
 
 from fmotor.application.dtos import (
 	MotorDTO,
@@ -23,12 +29,14 @@ from .events import (
 	NoMotorEvent
 )
 
+from .cache import MotorCache
+
 
 class FilterMotorViewModel(IViewModel):
 	""" FilterMotorViewModel class """
 
-	_filter_motor_query = Provide["filter_motor_query"]
-	_motor_cache = Provide["motor_cache"]
+	_filter_motor_query = inject.attr(FilterMotorQuery)
+	_motor_cache = inject.attr(MotorCache)
 
 	def filter_motors(self, motor):
 
@@ -70,8 +78,8 @@ class FilterMotorViewModel(IViewModel):
 class EstimateMotorViewModel(IViewModel):
 	""" EstimateMotorViewModel class """
 
-	_estimate_motor_command = Provide["estimate_motor_command"]
-	_motor_cache = Provide["motor_cache"]
+	_estimate_motor_command = inject.attr(EstimateMotorCommand)
+	_motor_cache = inject.attr(MotorCache)
 
 	def estimate_motor(self, motor):
 		motor_eval = self._motor_cache.get("cur_motor")
@@ -95,9 +103,9 @@ class EstimateMotorViewModel(IViewModel):
 
 class CalculateMotorViewModel(IViewModel):
 
-	_calculate_motor_command = Provide["calculate_motor_command"]
-	_estimate_motor_command = Provide["estimate_motor_command"]
-	_motor_cache = Provide["motor_cache"]
+	_calculate_motor_command = inject.attr(CalculateMotorCommand)
+	_estimate_motor_command = inject.attr(EstimateMotorCommand)
+	_motor_cache = inject.attr(MotorCache)
 
 	def execute(self, motor: dict, current):
 

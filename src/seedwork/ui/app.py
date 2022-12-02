@@ -1,15 +1,15 @@
 """ App UI Interface Module """
 
-from kivymd.app import MDApp
+import inject
 
-from dependency_injector.wiring import Provide
+from kivymd.app import MDApp
+from .themes import IDarkTheme
 
 
 class IApp(MDApp):
 	""" Interface UI App """
 
-	builder = Provide["builder"]
-	ui_theme = Provide["ui_theme"]
+	ui_theme = inject.attr(IDarkTheme)
 
 	def build(self):
 		pass

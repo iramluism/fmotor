@@ -1,15 +1,17 @@
 """ Component Interfaces module """
 
 import abc
+import inject
 
 from kivy.uix.widget import Widget
-from dependency_injector.wiring import Provide
+
+from .builder import IBuilder
 
 
 class IComponent(metaclass=abc.ABCMeta):
 	""" IComponent class """
 
-	builder = Provide["builder"]
+	builder = inject.attr(IBuilder)
 	state = {}
 	widget: Widget = None
 
