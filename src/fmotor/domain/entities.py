@@ -59,7 +59,7 @@ class MotorMeasurement(IEntity):
 	v: float = None
 	kc: float = None
 	pf: float = None
-	eff: float = None
-	p_out: float = None
-	p_in: float = None
-	losses: float = None
+	eff: float = 0
+	p_out: float = 0
+	p_in: float = 0
+	losses: float = 0
