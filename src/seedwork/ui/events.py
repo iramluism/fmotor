@@ -2,14 +2,17 @@
 
 import abc
 from kivy.clock import Clock
-from dependency_injector.wiring import Provide
+
+import inject
+
+from .cache import EventCache
 
 
 class IEvent:
 	""" IEvent class """
 
 	cid = None
-	_event_cache = Provide["event_cache"]
+	_event_cache = inject.attr(EventCache)
 
 	@classmethod
 	def dispatch(cls, *args, timeout=0, **kwargs):

@@ -1,9 +1,9 @@
 """ Containers Interfaces Module """
 
 from dependency_injector import containers, providers
-from src.seedwork.ui.utils import get_running_app
+from seedwork.ui.utils import get_running_app
 
-from src.config import settings
+from config import settings
 
 
 class IContainer(containers.DeclarativeContainer):
@@ -11,21 +11,21 @@ class IContainer(containers.DeclarativeContainer):
 
 	wiring_config = containers.WiringConfiguration(
 		modules=[
-			"src.seedwork.ui.app",
-			"src.seedwork.ui.events",
-			"src.seedwork.ui.view_models",
-			"src.seedwork.ui.builder",
-			"src.seedwork.infrastructure.repositories"
+			"seedwork.ui.app",
+			"seedwork.ui.events",
+			"seedwork.ui.view_models",
+			"seedwork.ui.builder",
+			"seedwork.infrastructure.repositories"
 		]
 	)
 
 	database_config = settings.DATABASE.get("default")
 
 	db = providers.Singleton(database_config.get("engine"), database_config.get("path"))
-	component_cache = providers.Singleton("src.seedwork.ui.cache.ComponentCache")
+	component_cache = providers.Singleton("seedwork.ui.cache.ComponentCache")
 	event_cache = providers.Singleton(
-		"src.seedwork.ui.cache.EventCache")
-	builder = providers.Singleton("src.seedwork.ui.builder.IBuilder")
-	ui_theme = providers.Singleton("src.seedwork.ui.themes.IDarkTheme")
+		"seedwork.ui.cache.EventCache")
+	builder = providers.Singleton("seedwork.ui.builder.IBuilder")
+	ui_theme = providers.Singleton("seedwork.ui.themes.IDarkTheme")
 	current_app = providers.Callable(get_running_app)
 

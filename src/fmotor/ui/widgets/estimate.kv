@@ -3,19 +3,19 @@
 MDBoxLayout:
     id: motor_comp
     orientation: "vertical"
-    height: "300dp"
+    height: "400dp"
     spacing: "12dp"
     size_hint_y: None
 
-    MDGridLayout:
-        cols: 3
-        size_hint_y: 0.12
+    MDBoxLayout:
+        orientation: "vertical"
+        size_hint_y: 0.4
 
         MDLabel:
             id: voltage
             markup:True
         MDLabel:
-            id: kw
+            id: power
             markup:True
         MDLabel:
             id: rpm

@@ -1,14 +1,51 @@
 """ Fmotor Infrastructure Repositories Module """
 
-from typing import List
-from dependency_injector.wiring import Provide
+import inject
 
-from src.seedwork.infrastructure.repositories import IRepository
-from src.fmotor.domain.entities import VoltageRangeEntity, ManufacturerEntity
-from src.fmotor.domain.aggregates import MotorAggregate
+from typing import List
+
+from seedwork.infrastructure.repositories import IRepository
+from fmotor.domain.entities import VoltageRangeEntity, ManufacturerEntity
+from fmotor.domain.aggregates import MotorAggregate
 
 from .mappers import DBMotorMapper, DBVoltageRangeMapper, DBManufacturerMapper
 from .utils import get_voltage_ranges
+
+
+class ManufacturerRepository(IRepository):
+	""" ManufacturerRepository class """
+
+	_table_name = "manufacturer"
+
+	def get(self, _id) -> ManufacturerEntity:
+		""" Get manufacturer entity """
+		manufactures = self.db.get_list(
+			self._table_name, {"manufacturer_id": _id}, as_dict=True, length=1)
+
+		manufacturer = None
+		if manufactures:
+			manufacturer = DBManufacturerMapper.create_entity(manufactures[0])
+
+		return manufacturer
+
+
+class VoltageRangeRepository(IRepository):
+	""" VoltageRangeRepository class """
+
+	voltage_table_name = "voltage_id"
+
+	def get(self, voltage_id) -> VoltageRangeEntity:
+		""" Get voltage Range entity by the voltage id """
+
+		voltages = self.db.get_list(
+			self.voltage_table_name, {"id": voltage_id}, as_dict=True,
+			length=1)
+
+		voltage = None
+		if voltages:
+			voltage = DBVoltageRangeMapper.create_entity(voltages[0])
+
+		return voltage
 
 
 class MotorRepository(IRepository):
@@ -16,8 +53,8 @@ class MotorRepository(IRepository):
 
 	table_name = "nemamotors"
 
-	_voltage_range_repository = Provide["voltage_range_repository"]
-	_manufacturer_repository = Provide["manufacturer_repository"]
+	_voltage_range_repository = inject.attr(VoltageRangeRepository)
+	_manufacturer_repository = inject.attr(ManufacturerRepository)
 
 	def all(self):
 		return self.filter()
@@ -62,40 +99,3 @@ class MotorRepository(IRepository):
 			motor = DBMotorMapper.create_aggregate(motors[0])
 
 		return motor
-
-
-class ManufacturerRepository(IRepository):
-	""" ManufacturerRepository class """
-
-	_table_name = "manufacturer"
-
-	def get(self, _id) -> ManufacturerEntity:
-		""" Get manufacturer entity """
-		manufactures = self.db.get_list(
-			self._table_name, {"manufacturer_id": _id}, as_dict=True, length=1)
-
-		manufacturer = None
-		if manufactures:
-			manufacturer = DBManufacturerMapper.create_entity(manufactures[0])
-
-		return manufacturer
-
-
-class VoltageRangeRepository(IRepository):
-	""" VoltageRangeRepository class """
-
-	voltage_table_name = "voltage_id"
-
-	def get(self, voltage_id) -> VoltageRangeEntity:
-		""" Get voltage Range entity by the voltage id """
-
-		voltages = self.db.get_list(
-			self.voltage_table_name, {"id": voltage_id}, as_dict=True,
-			length=1)
-
-		voltage = None
-		if voltages:
-			voltage = DBVoltageRangeMapper.create_entity(voltages[0])
-
-		return voltage
-

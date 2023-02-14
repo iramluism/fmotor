@@ -4,8 +4,8 @@ from typing import Optional, List
 
 from kivy.clock import mainthread, Clock
 
-from src.seedwork.ui.events import IEvent
-from src.seedwork.ui.utils import get_component
+from seedwork.ui.events import IEvent
+from seedwork.ui.utils import get_component
 
 
 class MotorListEvent(IEvent):

@@ -2,19 +2,19 @@
 
 import abc
 import inspect
-from dependency_injector.wiring import Provide
+import inject
 
 from kivy.lang.builder import Builder
 from kivy.factory import Factory
 from kivy.uix.widget import Widget
 
-from src.seedwork.ui.components import IComponent
+from .cache import ComponentCache
 
 
 class IBuilder(metaclass=abc.ABCMeta):
 	""" IBuilder class """
 
-	_component_cache = Provide["component_cache"]
+	_component_cache = inject.attr(ComponentCache)
 	_builder = Builder
 
 	def load_file(self, *args, **kwargs):
@@ -26,7 +26,7 @@ class IBuilder(metaclass=abc.ABCMeta):
 		return self._component_cache.get(comp_id)
 
 	@staticmethod
-	def get_events_from_states(component: IComponent):
+	def get_events_from_states(component):
 		""" Get events and methods from the rendered widget"""
 
 		states = component.state
@@ -51,7 +51,7 @@ class IBuilder(metaclass=abc.ABCMeta):
 
 		return events, methods
 
-	def build_component(self, component: IComponent):
+	def build_component(self, component):
 		""" Build Component and save it on cache """
 
 		widget = None

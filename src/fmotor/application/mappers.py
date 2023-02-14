@@ -1,10 +1,10 @@
 """ Fmotor Application Mappers Module """
 
-from src.seedwork.domain.mappers import IMapper
+from seedwork.domain.mappers import IMapper
 
 from .dtos import MotorDTO, CalculateMotorDTO
-from src.fmotor.domain.entities import MotorEntity, MotorMeasurement
-from src.fmotor.domain.aggregates import MotorAggregate
+from fmotor.domain.entities import MotorEntity, MotorMeasurement
+from fmotor.domain.aggregates import MotorAggregate
 from .utils import encrypt_motor_id, decrypt_motor_id
 
 
@@ -16,11 +16,6 @@ class MotorMapper(IMapper):
 		""" Create Motor entity from Motor DTO """
 
 		default_values = {}
-		if motor_dto.kw and not motor_dto.hp_nom:
-			default_values["hp_nom"] = motor_dto.kw * 1.34
-		elif motor_dto.hp_nom and not motor_dto.kw:
-			default_values["kw"] = motor_dto.hp_nom / 1.34
-
 		if motor_dto.id:
 			default_values["motor_id"] = decrypt_motor_id(motor_dto.id)
 

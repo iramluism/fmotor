@@ -4,11 +4,11 @@ Calculate, Calcular
 FILTER,FILTRAR
 CANCEL,CANCELAR
 Power,Potencia
-POWER IN,Potencia de Entrada
+Power In,Potencia de Entrada
 Estimation,Estimación
 Power Factor,Factor de Potencia
 Load Factor,Factor de Carga
-Efficiency, Eficiencia
+Efficiency,Eficiencia
 Power Out,Potencia de Salida
 Losses,Pérdidas
 Catalog,Catálogo
@@ -23,4 +23,8 @@ Power (%),Potencia (kw)
 Voltage (V),Voltaje (V)
 Type,Tipo
 Finding nearest motors ...,Buscando los motores más cercanos ...
-Tap the Search button to find motors, Presione el botón de búsqueda para buscar motores
+Tap the Search button to find motors, Presione el botón de búsqueda para filtrar motores
+Calculate Motor,Calcular Motor
+CALCULATE,CALCULAR
+Power (w),Potencia (w)
+Nominal Speed (rpm),Velocidad Nominal (rpm)

@@ -1,7 +1,7 @@
 """ Fmotor Domain Aggregates Module """
 
 import dataclasses
-from src.seedwork.domain.aggregates import IAggregate
+from seedwork.domain.aggregates import IAggregate
 
 
 @dataclasses.dataclass()
@@ -23,6 +23,8 @@ class MotorAggregate(IAggregate):
 	design: str = None
 	hp_nom: float = None
 	kw: float = None
+	p_nom: float = None
+	i_0: float = None
 	i_idle: float = None
 	i_fl: float = None
 	i_75: float = None
@@ -32,7 +34,9 @@ class MotorAggregate(IAggregate):
 	eff_75: float = None
 	eff_50: float = None
 	eff_25: float = None
+	eff_0: float = 0
 	pf_fl: float = None
 	pf_75: float = None
 	pf_50: float = None
 	pf_25: float = None
+	pf_0: float = 0.1

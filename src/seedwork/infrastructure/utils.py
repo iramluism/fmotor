@@ -31,7 +31,6 @@ def build_conditions(filters: dict):
 		"<=": Field.lte,
 		"<": Field.lt,
 		"in": Field.isin,
-		"not in": Field.notin,
 		"between": Field.between
 	}
 

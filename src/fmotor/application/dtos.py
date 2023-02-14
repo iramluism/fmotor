@@ -2,15 +2,15 @@
 
 import dataclasses
 
-from src.seedwork.infrastructure.dtos import IDTO
+from seedwork.infrastructure.dtos import IDTO
 
 
 @dataclasses.dataclass()
 class MotorDTO(IDTO):
 	""" Motor Data Transfer Object """
 
-	kw: float
 	rpm: float
+	kw: float = None
 	v_nom: str = None
 	voltage: str = None
 	hp_nom: float = None
@@ -20,19 +20,23 @@ class MotorDTO(IDTO):
 	frame: str = None
 	design: str = None
 	type: str = None
+	p_nom: str = None
 	i_idle: float = None
 	i_fl: float = None
 	i_75: float = None
 	i_50: float = None
 	i_25: float = None
-	eff_fl: int = 100
+	i_0: float = None
+	eff_fl: int = None
 	eff_75: int = None
 	eff_50: int = None
 	eff_25: int = None
-	pf_fl: int = 100
+	eff_0: int = None
+	pf_fl: int = None
 	pf_75: int = None
 	pf_50: int = None
 	pf_25: int = None
+	pf_0: int = None
 	id: str = None
 
 

@@ -8,65 +8,65 @@ class FMotorContainer(containers.DeclarativeContainer):
 
     wiring_config = containers.WiringConfiguration(
         modules=[
-            "src.fmotor.ui.app",
-            "src.fmotor.ui.view_models",
-            "src.fmotor.ui.components",
-            "src.fmotor.application.queries",
-            "src.fmotor.application.commands",
-            "src.fmotor.domain.services",
-            "src.fmotor.infrastructure.repositories"
+            "fmotor.ui.app",
+            "fmotor.ui.view_models",
+            "fmotor.ui.components",
+            "fmotor.application.queries",
+            "fmotor.application.commands",
+            "fmotor.domain.services",
+            "fmotor.infrastructure.repositories"
         ]
     )
 
     config = providers.Configuration()
 
-    motor_cache = providers.Singleton("src.fmotor.ui.cache.MotorCache")
+    motor_cache = providers.Singleton("fmotor.ui.cache.MotorCache")
 
     estimate_motor_view_model = providers.Factory(
-        "src.fmotor.ui.view_models.EstimateMotorViewModel"
+        "fmotor.ui.view_models.EstimateMotorViewModel"
     )
 
     calculate_motor_view_model = providers.Factory(
-        "src.fmotor.ui.view_models.CalculateMotorViewModel"
+        "fmotor.ui.view_models.CalculateMotorViewModel"
     )
 
     filter_motor_view_model = providers.Factory(
-        "src.fmotor.ui.view_models.FilterMotorViewModel")
+        "fmotor.ui.view_models.FilterMotorViewModel")
 
     filter_motor_query = providers.Factory(
-        "src.fmotor.application.queries.FilterMotorQuery",
+        "fmotor.application.queries.FilterMotorQuery",
     )
 
     motor_repository = providers.Factory(
-        "src.fmotor.infrastructure.repositories.MotorRepository")
+        "fmotor.infrastructure.repositories.MotorRepository")
 
     manufacturer_repository = providers.Factory(
-        "src.fmotor.infrastructure.repositories.ManufacturerRepository")
+        "fmotor.infrastructure.repositories.ManufacturerRepository")
 
     voltage_range_repository = providers.Factory(
-        "src.fmotor.infrastructure.repositories.VoltageRangeRepository")
+        "fmotor.infrastructure.repositories.VoltageRangeRepository")
 
     get_nearest_motor_service = providers.Factory(
-        "src.fmotor.domain.services.GetNearestMotorService")
+        "fmotor.domain.services.GetNearestMotorService")
 
     motor_validator = providers.Factory(
-        "src.fmotor.domain.validations.MotorValidator")
+        "fmotor.domain.validations.MotorValidator")
 
     get_motor_error_service = providers.Factory(
-        "src.fmotor.domain.services.GetMotorErrorService")
+        "fmotor.domain.services.GetMotorErrorService")
 
     estimate_motor_command = providers.Factory(
-        "src.fmotor.application.commands.EstimateMotorCommand")
+        "fmotor.application.commands.EstimateMotorCommand")
 
     estimate_motor_service = providers.Factory(
-        "src.fmotor.domain.services.EstimateMotorService")
+        "fmotor.domain.services.EstimateMotorService")
 
     interpolate_motor_service = providers.Factory(
-        "src.fmotor.domain.services.InterpolateMotorService")
+        "fmotor.domain.services.InterpolateMotorService")
 
     calculate_motor_command = providers.Factory(
-        "src.fmotor.application.commands.CalculateMotorCommand")
+        "fmotor.application.commands.CalculateMotorCommand")
 
     interpolate_motor_validator = providers.Factory(
-        "src.fmotor.domain.validations.InterpolateMotorValidator")
+        "fmotor.domain.validations.InterpolateMotorValidator")
 

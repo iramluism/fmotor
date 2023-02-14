@@ -1,6 +1,6 @@
 """ Fmotor Domain Mappers Module """
 
-from src.seedwork.domain.mappers import IMapper
+from seedwork.domain.mappers import IMapper
 from .aggregates import MotorAggregate
 
 
@@ -22,10 +22,12 @@ class EstimateMotorMapper(IMapper):
 				"eff_75": motor_ref.eff_75,
 				"eff_50": motor_ref.eff_50,
 				"eff_25": motor_ref.eff_25,
+				"eff_0": motor_ref.eff_0,
 				"pf_fl": motor_ref.pf_fl,
 				"pf_75": motor_ref.pf_75,
 				"pf_50": motor_ref.pf_50,
-				"pf_25": motor_ref.pf_25
+				"pf_25": motor_ref.pf_25,
+				"pf_0": motor_ref.pf_0,
 			},
 		)
 

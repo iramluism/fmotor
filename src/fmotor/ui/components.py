@@ -1,14 +1,15 @@
 """ Fmotor UI Components Module """
 
-from typing import List, Optional, NoReturn
+import inject
 
-from dependency_injector.wiring import Provide
+from typing import List, Optional, NoReturn
 from kivymd.material_resources import dp
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.gridlayout import MDGridLayout
 from kivymd.uix.label import MDLabel
 from kivymd.uix.screen import MDScreen
+from kivymd.uix.spinner import MDSpinner
 from kivymd.uix.toolbar import MDTopAppBar
 from kivymd.uix.list import MDList, IconLeftWidget, OneLineAvatarListItem
 from kivymd.uix.list import TwoLineAvatarIconListItem
@@ -21,11 +22,16 @@ from kivymd.uix.button import (
 	MDIconButton, MDRaisedButton
 )
 
-from kivymd.uix.spinner import MDSpinner
+from seedwork.ui.utils import _
+from seedwork.ui.components import IComponent
 
-from src.fmotor.ui.utils import prepare_motor_values
-from src.seedwork.ui.utils import _
-from src.seedwork.ui.components import IComponent
+from fmotor.ui.utils import prepare_motor_values
+from fmotor.ui.cache import MotorCache
+from fmotor.ui.view_models import (
+	FilterMotorViewModel,
+	EstimateMotorViewModel,
+	CalculateMotorViewModel
+)
 
 
 class FMotorAppComponent(IComponent):
@@ -100,7 +106,7 @@ class SearchButtonComponent(IComponent):
 
 		return MDFloatingActionButton(
 			pos_hint={'x': .8, 'y': .05}, icon="magnify",
-			icon_color=(1, 1, 1, 1),
+			icon_color=(1, 1, 1, 1), elevation=2,
 			on_press=lambda e: MotorFormComponent.build().open()
 		)
 
@@ -116,7 +122,7 @@ class ToolBarComponent(IComponent):
 		self.actions = actions or {}
 		self.widget = MDTopAppBar(
 			title=self.title, opposite_colors=True,
-			md_bg_color=(1, 1, 0, 1), type_height="small", elevation=4
+			md_bg_color=(1, 1, 0, 1), type_height="small",elevation=0
 		)
 
 	def update_title(self, title: str) -> NoReturn:
@@ -144,7 +150,7 @@ class ToolBarComponent(IComponent):
 
 		toolbar = MDTopAppBar(
 			title=self.title, opposite_colors=True,
-			md_bg_color=(1, 1, 0, 1), type_height="small", elevation=4
+			md_bg_color=(1, 1, 0, 1), type_height="small", elevation=0
 		)
 
 		self.widget = toolbar
@@ -192,29 +198,28 @@ class ListMotorComponent(IComponent):
 		layout = self.widget
 		layout.clear_widgets()
 
-		screen = MDScreen()
 		if motors:
 			content = MDList()
 			for motor in motors:
 				content.add_widget(MotorItemComponent.build(motor))
-
-			screen.add_widget(content)
 		else:
 
-			screen.add_widget(
+			content = MDScreen()
+
+			content.add_widget(
 				MDLabel(text=_("No Motors"), halign="center",
 				        theme_text_color="Hint", font_style="Body1")
 			)
 
-			screen.add_widget(
+			content.add_widget(
 				MDLabel(text=_("Tap the Search button to find motors"),
 				        halign="center", theme_text_color="Hint",
 				        pos_hint={"center_y": 0.45}, font_style="Caption")
 			)
 
-		layout.add_widget(screen)
+		layout.add_widget(content)
 
-	def render(self) -> MDLabel | MDScrollView:
+	def render(self):
 		""" Render motor results """
 		self.widget = layout = MDScrollView()
 		self.refresh_data(self.motors)
@@ -225,8 +230,8 @@ class MotorFormComponent(IComponent):
 	""" MotorFormComponent class """
 
 	id = "motor_form"
-	_filter_motor_view_model = Provide["filter_motor_view_model"]
-	_motor_cache = Provide["motor_cache"]
+	_filter_motor_view_model = inject.attr(FilterMotorViewModel)
+	_motor_cache = inject.attr(MotorCache)
 	dialog = None
 
 	@classmethod
@@ -238,6 +243,7 @@ class MotorFormComponent(IComponent):
 			on_press=lambda e: cls._on_press_cancel_button())
 
 		filter_button = MDRaisedButton(
+			elevation=1,
 			text=_("FILTER"), theme_text_color="Custom", text_color="white",
 			on_press=lambda e: cls._on_press_filter_button())
 
@@ -269,7 +275,7 @@ class MotorFormComponent(IComponent):
 		cls.dialog.dismiss()
 
 		motor_inputs = {}
-		for field in ("voltage", "kw", "rpm", "eff", "pf"):
+		for field in ("voltage", "power", "rpm", "eff", "pf"):
 			widget = cls.dialog.content_cls.ids.get(field)
 			if widget.text:
 				motor_inputs[field] = widget.text
@@ -286,7 +292,7 @@ class MotorComponent(IComponent):
 	""" MotorComponent class """
 
 	id = "motor"
-	_estimate_motor_view_model = Provide["estimate_motor_view_model"]
+	_estimate_motor_view_model = inject.attr(EstimateMotorViewModel)
 
 	def __init__(self, motor=None):
 		super().__init__()
@@ -304,7 +310,7 @@ class MotorComponent(IComponent):
 			("catalog", "[b]%s:[/b] %s", _("Catalog"), motor.get("catalog")),
 			("frame", "[b]%s:[/b] %s", _("Frame"), motor.get("frame")),
 			("voltage", "[b]%s:[/b] %s V", _("Voltage"), motor.get("voltage")),
-			("kw", "[b]%s:[/b] %s kw", _("Power"), motor.get("kw")),
+			("power", "[b]%s:[/b] %s w", _("Power"), motor.get("p_nom")),
 			("rpm", "[b]%s:[/b] %s", _("rpm"), motor.get("rpm"))
 		]
 
@@ -358,29 +364,23 @@ class MotorComponent(IComponent):
 class MotorDataTableComponent(IComponent):
 	""" MotorDataTableComponent class """
 
-	_column_data = [
-		("Kc", dp(20)),
-		("100%", dp(20)),
-		("75%", dp(20)),
-		("50%", dp(20)),
-		("25%", dp(20)),
-	]
-
 	def __init__(self, motor, **kwargs):
 		super().__init__(**kwargs)
-		self.motor = motor
+		self.motor = motor or {}
 
 	def update_motor(self, motor: Optional[dict] = None) -> NoReturn:
 		""" Update rows from motor """
 
 		motor = motor or {}
 
-		new_data = self._get_table_data(motor)
 		datatable = self.widget
 
-		datatable.update_row(datatable.row_data[0], new_data[0])
-		datatable.update_row(datatable.row_data[1], new_data[1])
-		datatable.update_row(datatable.row_data[2], new_data[2])
+		rows, cols = self._get_table_data(motor)
+		datatable.column_data = cols
+
+		datatable.update_row(datatable.row_data[0], rows[0])
+		datatable.update_row(datatable.row_data[1], rows[1])
+		datatable.update_row(datatable.row_data[2], rows[2])
 
 	def _get_table_data(self, motor: Optional[dict] = None) -> NoReturn:
 		""" Get rows from motor values """
@@ -388,26 +388,45 @@ class MotorDataTableComponent(IComponent):
 		if not motor:
 			motor = self.motor
 
-		eff_row, pf_row, amps_row = [_("eff")], [_("pf")], [_("amps")]
+		cols = [
+			("Kc", dp(20)),
+			("100%", dp(20)),
+			("75%", dp(20)),
+			("50%", dp(20)),
+			("25%", dp(20)),
+			("0%", dp(20))
+		]
 
-		for load in ("fl", "75", "50", "25"):
-			eff = motor.get("eff_%s" % load)
-			eff_row.append(eff or "")
+		rows_map = {
+			"eff": ["eff"],
+			"pf": ["pf"],
+			"i": ["amps"]
+		}
 
-			pf = motor.get("pf_%s" % load)
-			pf_row.append(pf or "")
+		for f in rows_map:
+			for load in ("fl", "75", "50", "25", "0"):
+				field = "%s_%s" % (f, load)
+				value = motor.get(field)
 
-			amps = motor.get("i_%s" % load)
-			amps_row.append(amps or "")
+				if value is None:
+					value = ""
 
-		return eff_row, pf_row, amps_row
+				row = rows_map[f]
+				row.append(value)
+
+		rows = list(rows_map.values())
+
+		return rows, cols
 
 	def render(self) -> MDDataTable:
 		""" Render Efficiency and power factor table of a given motor """
 
+		rows, cols = self._get_table_data(self.motor)
+
 		datatable = MDDataTable(
-			column_data=self._column_data,
-			row_data=self._get_table_data()
+			column_data=cols,
+			row_data=rows,
+			elevation=1
 		)
 		return datatable
 
@@ -428,7 +447,7 @@ class EstimateMotorComponent(IComponent):
 		motor = prepare_motor_values(motor)
 		motor_label_text = {
 			"voltage": "[b]%s:[/b] %s V" % (_("Voltage"), motor.get("v_nom")),
-			"kw": "[b]%s:[/b] %s kw" % (_("Power"), motor.get("kw")),
+			"power": "[b]%s:[/b] %s w" % (_("Power"), motor.get("p_nom")),
 			"rpm": "[b]rpm:[/b] %s rpm" % motor.get("rpm")
 		}
 
@@ -460,7 +479,7 @@ class EstimateMotorComponent(IComponent):
 class CalculateFormComponent(IComponent):
 	id = "calculate_form"
 
-	_calculate_motor_view_model = Provide["calculate_motor_view_model"]
+	_calculate_motor_view_model = inject.attr(CalculateMotorViewModel)
 
 	def __init__(self, motor):
 		super().__init__()
@@ -474,27 +493,27 @@ class CalculateFormComponent(IComponent):
 
 		label_args = {
 			"markup": True,
-			"halign": "center",
+			"halign": "left",
 			"theme_text_color": "Hint",
 		}
 
 		content.clear_widgets()
 
 		content.add_widget(
-			MDGridLayout(
+			MDBoxLayout(
 				MDLabel(text="[b]%s:[/b] %s " % (_("Load Factor"), motor.get("kc")),
 				        **label_args),
 				MDLabel(text="[b]%s:[/b] %s " % (_("Power Factor"), motor.get("pf")),
 				        **label_args),
 				MDLabel(text="[b]%s:[/b] %s " % (_("Efficiency"), motor.get("eff")),
 				        **label_args),
-				MDLabel(text="[b]%s:[/b] %s kw" % (_("Power Out"), motor.get("p_out")),
+				MDLabel(text="[b]%s:[/b] %s w" % (_("Power Out"), motor.get("p_out")),
 				        **label_args),
-				MDLabel(text="[b]%s:[/b] %s kw" % (_("Power In"), motor.get("p_in")),
+				MDLabel(text="[b]%s:[/b] %s w" % (_("Power In"), motor.get("p_in")),
 				        **label_args),
-				MDLabel(text="[b]%s:[/b] %s kw" % (_("Losses"), motor.get("losses")),
+				MDLabel(text="[b]%s:[/b] %s w" % (_("Losses"), motor.get("losses")),
 				        **label_args),
-				cols=2,
+				orientation="vertical"
 			)
 		)
 
@@ -517,7 +536,7 @@ class CalculateFormComponent(IComponent):
 				),
 				MDRaisedButton(
 					text=_("CALCULATE"), theme_text_color="Custom",
-					text_color="white",
+					text_color="white", elevation=1,
 					on_press=lambda e: self.calculate()
 				)
 			]

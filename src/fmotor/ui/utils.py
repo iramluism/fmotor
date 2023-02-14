@@ -37,9 +37,13 @@ def parse_error_messages(e) -> list:
 	messages = []
 	errors = e.args[0]
 
+	if isinstance(errors, str):
+		errors = [errors]
+
 	for error in errors:
 		if isinstance(error, str):
 			messages.append(error)
+
 		elif "message" in error:
 			messages.append(error.get("message"))
 

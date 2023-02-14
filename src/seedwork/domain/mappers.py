@@ -105,9 +105,12 @@ class IMapper:
 	@staticmethod
 	def _get_value_from_obj(obj, field, default_value=None):
 		if hasattr(obj, "get"):
-			value = obj.get(field) or default_value
+			value = obj.get(field)
 		else:
 			value = getattr(obj, field, default_value)
+
+		if value is None:
+			value = default_value
 
 		return value
 
